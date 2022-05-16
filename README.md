@@ -4,7 +4,9 @@ to robosuite/__init__.py
 
 Add kuka_linear_env.py to robosuite/environments/manipulation
 
-Add frame_arene.py to robosuite/models/arenas
+Add frame_arena.py to robosuite/models/arenas
+
+Add frame_arena.xml to robosuite/models/assets/arenas
 
 Add iiwa_extended_robot.py to robosuite/models/robots/manipulators
 
