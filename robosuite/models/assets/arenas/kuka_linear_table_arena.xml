@@ -1,0 +1,87 @@
+<mujoco model="kuka_linear_table_arena">
+  <asset>
+    <texture builtin="gradient" height="256" rgb1=".9 .9 1." rgb2=".2 .3 .4" type="skybox" width="256"/>
+    <texture file="../textures/wood-tiles.png" type="2d" name="texplane"/>
+    <material name="floorplane" reflectance="0.01" shininess="0.0" specular="0.0" texrepeat="2 2" texture="texplane" texuniform="true"/>
+    <!-- steel -->
+    <texture file="../textures/steel-brushed.png" type="cube" name="tex-steel-brushed"/>
+    <material name="smetal" reflectance="0.8" shininess="0.8" texrepeat="1 1" texture="tex-steel-brushed" />
+    <!-- plaster walls -->
+    <texture file="../textures/cream-plaster.png" type="2d" name="tex-cream-plaster"/>
+    <material name="walls_mat" reflectance="0.0" shininess="0.1" specular="0.1" texrepeat="3 3" texture="tex-cream-plaster" texuniform="true" />
+    
+    <material name="black" reflectance="0.0" shininess="0.1" specular="0.1" texrepeat="3 3" rgba="0.2 0.2 0.2 1" texuniform="true" />
+    
+    <material name="grey" reflectance="0.0" shininess="0.1" specular="0.1" texrepeat="3 3" rgba="0.4 0.4 0.4 1" texuniform="true" />
+    
+    
+    <mesh file="meshes/cap_4x40x40.stl" name="cap_4x40x40_mesh" scale="0.001 0.001 0.001"/>
+    <mesh file="meshes/profile_952x40x40.stl" name="profile_952x40x40_mesh" scale="0.001 0.001 0.001"/>
+    <mesh file="meshes/profile_1220x160x40.stl" name="profile_1220x160x40_mesh" scale="0.001 0.001 0.001"/>
+    
+
+  </asset>
+  <worldbody>
+    <!-- Floor -->
+    <geom condim="3" material="floorplane" name="floor" pos="0 0 0" size="3 3 .125" type="plane"/>
+    <!-- Walls (visual only) -->
+    <geom pos="-1.25 2.25 1.5" quat="0.6532815 0.6532815 0.2705981 0.2705981" size="1.06 1.5 0.01" type="box" conaffinity="0" contype="0" group="1" name="wall_leftcorner_visual" material="walls_mat"/>
+    <geom pos="-1.25 -2.25 1.5" quat="0.6532815 0.6532815 -0.2705981 -0.2705981" size="1.06 1.5 0.01" type="box" conaffinity="0" contype="0" group="1" name="wall_rightcorner_visual" material="walls_mat"/>
+    <geom pos="1.25 3 1.5" quat="0.7071 0.7071 0 0" size="1.75 1.5 0.01" type="box" conaffinity="0" contype="0" group="1" name="wall_left_visual" material="walls_mat"/>
+    <geom pos="1.25 -3 1.5" quat="0.7071 -0.7071 0 0" size="1.75 1.5 0.01" type="box" conaffinity="0" contype="0" group="1" name="wall_right_visual" material="walls_mat"/>
+    <geom pos="-2 0 1.5" quat="0.5 0.5 0.5 0.5" size="1.5 1.5 0.01" type="box" conaffinity="0" contype="0" group="1" name="wall_rear_visual" material="walls_mat"/>
+    <geom pos="3 0 1.5" quat="0.5 0.5 -0.5 -0.5" size="3 1.5 0.01" type="box" conaffinity="0" contype="0" group="1" name="wall_front_visual" material="walls_mat"/>
+    
+    
+    <!-- Table (visual and collision)-->
+    <body name="table" pos="0 0 0">
+      <body name="table_top" pos ="0 0 0.680">
+        <geom pos="0 -0.630 -0.02" euler="0 0 1.5708"  mesh="profile_952x40x40_mesh" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+        <geom pos="0 0.630 -0.02" euler="0 0 1.5708"  mesh="profile_952x40x40_mesh" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+        <geom pos="-0.4 0 -0.02" euler="0 0 0"  mesh="profile_1220x160x40_mesh" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+        <geom pos="-0.24 0 -0.02" euler="0 0 0"  mesh="profile_1220x160x40_mesh" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+        <geom pos="-0.08 0 -0.02" euler="0 0 0"  mesh="profile_1220x160x40_mesh" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+        <geom pos="0.08 0 -0.02" euler="0 0 0"  mesh="profile_1220x160x40_mesh" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+        <geom pos="0.24 0 -0.02" euler="0 0 0"  mesh="profile_1220x160x40_mesh" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+        <geom pos="0.4 0 -0.02" euler="0 0 0"  mesh="profile_1220x160x40_mesh" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+        <geom pos="-0.476 -0.630 -0.02" euler="0 -1.5708 0"  mesh="cap_4x40x40_mesh" type="mesh" material="grey" group="1" conaffinity="0" contype="0"/>
+        <geom pos="-0.476 +0.630 -0.02" euler="0 -1.5708 0"  mesh="cap_4x40x40_mesh" type="mesh" material="grey" group="1" conaffinity="0" contype="0"/>
+        <geom pos="+0.476 -0.630 -0.02" euler="0 +1.5708 0"  mesh="cap_4x40x40_mesh" type="mesh" material="grey" group="1" conaffinity="0" contype="0"/>
+        <geom pos="+0.476 +0.630 -0.02" euler="0 +1.5708 0"  mesh="cap_4x40x40_mesh" type="mesh" material="grey" group="1" conaffinity="0" contype="0"/>
+        <geom pos="0 0 -0.02" size="0.480 0.650 0.02" type="box" group="0" name="table_plate_collision" friction="1 0.005 0.0001"/>
+        
+        
+        <geom pos="0 -0.450 -0.360" size="0.030 0.030 0.3" type="box" material="black" group="1" conaffinity="0"  friction="1 0.005 0.0001"/>
+        <geom pos="0 -0.450 -0.050" size="0.2925 0.030 0.010" type="box" material="black" group="1" conaffinity="0"  friction="1 0.005 0.0001"/>
+        <geom pos="0 0.450 -0.360" size="0.030 0.030 0.3" type="box" material="black" group="1" conaffinity="0"  friction="1 0.005 0.0001"/>
+        <geom pos="0 0.450 -0.050" size="0.2925 0.030 0.010" type="box" material="black" group="1" conaffinity="0" />
+      </body>
+      <body name="table_middle" pos ="0 0 0.640">
+        <geom pos="0 -0.450 -0.320" size="0.035 0.035 0.300" type="box" material="black" group="1" conaffinity="0" friction="1 0.005 0.0001"/> 
+        <geom pos="0 0.450 -0.320" size="0.035 0.035 0.300" type="box" material="black" group="1" conaffinity="0" friction="1 0.005 0.0001"/> 
+      </body>
+      
+      <body name="table_bottom" pos ="0 0 0">
+        <geom pos="0 -0.450 0.010" size="0.370 0.040 0.010" type="box" material="black" group="1" conaffinity="0" friction="1 0.005 0.0001"/>
+        <geom pos="0 -0.450 0.320" size="0.040 0.040 0.300" type="box" material="black" group="1" conaffinity="0" friction="1 0.005 0.0001"/>
+        <geom pos="0 0.450 0.010" size="0.370 0.040 0.010" type="box" material="black" group="1" conaffinity="0" friction="1 0.005 0.0001"/>
+        <geom pos="0 0.450 0.320" size="0.040 0.040 0.300" type="box" material="black" group="1" conaffinity="0" friction="1 0.005 0.0001"/>
+      </body>
+      
+      
+    
+      
+    </body>
+
+    <light name="light1" diffuse=".8 .8 .8" dir="0 -.15 -1" directional="false" pos="1 1 4.0" specular="0.3 0.3 0.3" castshadow="false"/>
+    <light name="light2" diffuse=".8 .8 .8" dir="0 -.15 -1" directional="false" pos="-3. -3. 4.0" specular="0.3 0.3 0.3" castshadow="false"/>
+    <!-- front view -->
+    <camera mode="fixed" name="frontview" pos="3 0 1.6" quat="0.56 0.43 0.43 0.56"/>
+    <!-- bird view -->
+    <camera mode="fixed" name="birdview" pos="-0.2 0 3.0" quat="0.7071 0 0 0.7071"/>
+    <!-- agent view -->
+    <camera mode="fixed" name="agentview" pos="0.5 0 1.35" quat="0.653 0.271 0.271 0.653"/>
+    <!-- side view -->
+    <camera mode="fixed" name="sideview" pos="-0.05651774593317116 1.2761224129427358 1.4879572214102434" quat="0.009905065491771751 0.006877963156909582 0.5912228352893879 0.806418094001364" />
+  </worldbody>
+</mujoco>
