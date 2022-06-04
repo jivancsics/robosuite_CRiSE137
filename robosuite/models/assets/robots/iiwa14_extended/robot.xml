@@ -1,0 +1,175 @@
+<mujoco model="iiwa14_extended">
+    <actuator>
+        <!-- Physical limits of the actuator. -->
+        <!-- Values taken from kuka_lbr_iiwa_brochure_en.pdf (see website) -->
+        <motor ctrllimited="true" ctrlrange="-800 800" joint="joint" name="force_f0"/>
+        <motor ctrllimited="true" ctrlrange="-1000 1000" joint="joint_0" name="force_f1"/>
+        <motor ctrllimited="true" ctrlrange="-320.0 320.0" joint="joint_1" name="torq_j1"/>
+        <motor ctrllimited="true" ctrlrange="-320.0 320.0" joint="joint_2" name="torq_j2"/>
+        <motor ctrllimited="true" ctrlrange="-176.0 176.0" joint="joint_3" name="torq_j3"/>
+        <motor ctrllimited="true" ctrlrange="-176.0 176.0" joint="joint_4" name="torq_j4"/>
+        <motor ctrllimited="true" ctrlrange="-110.0 110.0" joint="joint_5" name="torq_j5"/>
+        <motor ctrllimited="true" ctrlrange="-40.0 40.0" joint="joint_6" name="torq_j6"/>
+        <motor ctrllimited="true" ctrlrange="-40.0 40.0" joint="joint_7" name="torq_j7"/>
+    </actuator>
+    <asset>
+    	<texture file="../../textures/steel-brushed.png" type="cube" name="steel-metal"/>
+    
+        <material name="smetal" reflectance="1.0" shininess="1.0" specular="1.0" texrepeat="1 1" texture="steel-metal" texuniform="true"/>
+    
+        <mesh file="meshes/kuka_linear_robot_meshes/frame.stl" name="frame_mesh" scale="0.001 0.001 0.001"/>
+        <mesh file="meshes/kuka_linear_robot_meshes/EGC-120-3130-TB-KF-0H-GV.stl" name="EGC-120-3130-TB-KF-0H-GV" scale="0.001 0.001 0.001"/>
+        <mesh file="meshes/kuka_linear_robot_meshes/EGC-TB-KF_motor_back.stl" name="motor_back" scale="0.001 0.001 0.001"/>
+        <mesh file="meshes/kuka_linear_robot_meshes/EGC-TB-KF_motor_front.stl" name="motor_front" scale="0.001 0.001 0.001"/>
+    	<mesh name="slide_1" file="meshes/kuka_linear_robot_meshes/EGC-120-3130-TB-KF-0H-GV_slide.stl" scale="0.001 0.001 0.001"/>
+    	<mesh name="rail_2" file="meshes/kuka_linear_robot_meshes/EGC-HD-160-1480-TB-0H-GK.stl" scale="0.001 0.001 0.001"/>
+    	<mesh name="slide_2" file="meshes/kuka_linear_robot_meshes/EGC-HD-160-1480-TB-0H-GK_slide.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_0" file="meshes/link_0.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_1" file="meshes/link_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_2" file="meshes/link_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_3" file="meshes/link_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_4" file="meshes/link_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_5" file="meshes/link_5.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_6" file="meshes/link_6.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_7" file="meshes/link_7.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_0_vis" file="meshes/link_0.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_1_vis" file="meshes/link_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_2_vis" file="meshes/link_2.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_3_vis" file="meshes/link_3.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_4_vis" file="meshes/link_4.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_5_vis" file="meshes/link_5.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_6_vis" file="meshes/link_6.stl" scale="0.001 0.001 0.001"/>
+        <mesh name="link_7_vis" file="meshes/link_7.stl" scale="0.001 0.001 0.001"/>
+    </asset>
+    <worldbody>
+        <body name="base" pos="0 0 0">
+            <!-- robot view -->
+            <camera mode="fixed" name="robotview" pos="1.0 0 0.4" quat="0.653 0.271 0.271 0.653"/>
+            
+            <body name="frame" pos="0 0 0">
+                <geom pos="0 0 0" euler="0 0 1.5708"  mesh="frame_mesh" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+      
+                <geom pos="-0.96 0 1.04" size="0.04 1.495 1.04" type="box" group="0" name="frame_collision1" friction="1 0.005 0.0001"/>
+                <geom pos="0.96 0 1.04" size="0.04 1.495 1.04" type="box" group="0" name="frame_collision2" friction="1 0.005 0.0001"/>
+                <geom pos="0 -1.455 1.04" size="0.92 0.04 1.04" type="box" group="0" name="frame_collision3" friction="1 0.005 0.0001"/>
+                <geom pos="0 1.455 1.04" size="0.92 0.04 1.04" type="box" group="0" name="frame_collision4" friction="1 0.005 0.0001"/>
+                <geom pos="0 0 2.04" size="0.92 1.415 0.04" type="box" group="0" name="frame_collision5" friction="1 0.005 0.0001"/>
+      
+                <geom pos="-0.52 0 2.0006" euler="-1.5708 0 0"  mesh="EGC-120-3130-TB-KF-0H-GV" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+                <geom pos="0.52 0 2.0006" euler="-1.5708 0 0"  mesh="EGC-120-3130-TB-KF-0H-GV" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+      
+                <geom pos="-0.52 0 1.9561" size="0.058 1.495 0.0445" type="box" group="0" name="EGC_120_collision1" friction="1 0.005 0.0001"/>
+                <geom pos="0.52 0 1.9561" size="0.058 1.495 0.0445" type="box" group="0" name="EGC_120_collision2" friction="1 0.005 0.0001"/>
+      
+      
+                <geom pos="-0.58 -1.455 1.9496" euler="0 0 3.1416"  mesh="motor_back" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+                <geom pos="0.58 -1.455 1.9496" euler="0 0 3.1416"  mesh="motor_front" type="mesh" material="smetal" group="1" conaffinity="0" contype="0"/>
+      
+            </body>
+            
+            
+            
+            <body name="slide1" pos="-0.073 0 1.9231" euler="3.141593 0 0">
+               
+                <inertial diaginertia="100 100 100" mass="40" pos="0 0 0"/> 
+            
+                <joint name="joint" type="slide" pos="0 0 0" axis="0 1 0" limited="true" range="-1.243 1.243" damping="0.1" />
+               
+        
+                <body name="slide1_visual" euler="3.141593 0 0" pos="0 0 0">
+                    <geom type="mesh" pos="0 0 -0.034" contype="0" conaffinity="0" group="1" rgba="0.4 0.4 0.4 1" name="rail_2_visual" mesh="rail_2" euler="0 0 3.141593"/>
+                    <geom type="mesh" pos="-0.447 0 0" contype="0" conaffinity="0" group="1" rgba="0.4 0.4 0.4 1" name="slide_1_visual1" mesh="slide_1" euler="0 0 0"/>
+                    <geom type="mesh" pos="0.593 0 0" contype="0" conaffinity="0" group="1" rgba="0.4 0.4 0.4 1" name="slide_1_visual2" mesh="slide_1" euler="0 0 0"/>
+            	</body>
+            	
+            	
+            	<body name="slide1_collision" euler="3.141593 0 0" pos="0 0 0">
+            	    <geom pos="0 0 -0.06275" size="0.8 0.081 0.02857" type="box" group="0" name="rail_2_collision" friction="1 0.005 0.0001"/> <!-- should be bigger than 0.8 in x dir, but seems to collide with frame collision-->
+            	    <geom pos="-0.4525 0 -0.027" size="0.0535 0.15 0.012" type="box" group="0" name="slide_1_collision1" friction="1 0.005 0.0001"/> 
+            	    <geom pos="0.5875 0 -0.027" size="0.0535 0.15 0.012" type="box" group="0" name="slide_1_collision2" friction="1 0.005 0.0001"/> 
+            	    
+            	    
+            	</body>
+            	
+            
+                <body name="slide2" pos="0 0 0.1105">
+        
+                    <inertial diaginertia="100 100 100" mass="10.495" pos="0 0 0"/> 
+            
+                    <joint name="joint_0" type="slide" pos="0 0 0" axis="1 0 0" limited="true" range="-0.8625 0.8625" damping="0.1" />
+            
+                    <geom type="mesh" pos="0 0 -0.0297" contype="0" conaffinity="0" group="1" rgba="0.4 0.4 0.4 1" name="slide_2_visual" mesh="slide_2" euler="3.141593 0 1.570796"/>
+                    
+                    <geom pos="0 0 -0.01485" size="0.11 0.07535 0.01485" type="box" group="0" name="slide_2_collision" friction="1 0.005 0.0001"/>
+                    
+                
+                    <geom type="mesh" pos="0 0 0" contype="0" conaffinity="0" group="1" rgba="0.4 0.4 0.4 1" name="link_0_visual" mesh="link_0_vis" />
+                    <geom type="mesh" pos="0 0 0" rgba="0.4 0.4 0.4 1" contype="0" mesh="link_0" name="link_0_collision" />
+                    
+            
+                    <body name="link_1" pos="0 0 0.1525">
+                        <inertial pos="0 -0.01439 0.102503" euler="0 0 0" mass="6.495" diaginertia="0.0690761441316632 0.0711085586914514 0.0200625854402119" />
+                        <joint name="joint_1" pos="0 0 0" axis="0 0 1" limited="true" range="-2.96706 2.96706" damping="0.1" />
+                        <geom pos="0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.4 0.4 0.4 1" name="link_1_visual" mesh="link_1_vis" />
+                        <geom pos="0 0 0" type="mesh" contype="0" rgba="0.4 0.4 0.4 1" mesh="link_1" name="link_1_collision" />
+                        
+                        
+                        <body name="link_2" pos="0 0 0.2075" euler="1.5708 3.141593 3.141593">
+                            <inertial pos="1.2e-05 0.06472 0.004804" euler="0 0 -3.141593" mass="8.807" diaginertia="0.0824701683534692 0.0164110968055191 0.0873510892661361" />
+                            <joint name="joint_2" pos="0 0 0" axis="0 0 1" limited="true" range="-2.0944 2.0944" damping="0.1" />
+                            <geom pos="0 0 -0.013" type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.423529 0.0392157 1" name="link_2_visual" mesh="link_2_vis" />
+                            <geom pos="0 0 -0.013" type="mesh" contype="0" rgba="1 0.423529 0.0392157 1" mesh="link_2" name="link_2_collision" />
+                            
+                            
+                            
+                            <body name="link_3" pos="0 -0.2325 0" euler="1.5708 0 0">
+                                <inertial pos="-2.08e-04 0.01601 0.087283" euler="0 0 0" mass="2.8" diaginertia="0.0230152941318817 0.0228661554143474 0.044482283748983" /> <!-- izz="0.0554482283748983" but does not satify ixx + iyy >= izz -->
+                                <joint name="joint_3" pos="0 0 0" axis="0 0 1" limited="true" range="-2.96706 2.96706" damping="0.1" />
+                                <geom pos="0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.4 0.4 0.4 1" name="link_3_visual" mesh="link_3_vis" />
+                                <geom pos="0 0 0" type="mesh" contype="0" rgba="0.4 0.4 0.4 1" mesh="link_3" name="link_3_collision" />
+                                <body name="link_4" pos="0 0 0.1875" euler="1.5708 0 0">
+                                    <inertial pos="-2.03e-04 0.098639 0.011478" euler="0 0 0" mass="5.283" diaginertia="0.0472789668341968 0.00964726804146909 0.0466529007761679" />
+                                    <joint name="joint_4" pos="0 0 0" axis="0 0 1" limited="true" range="-2.0944 2.0944" damping="0.1" />
+                                    <geom pos="0 0 -0.011" type="mesh" contype="0" conaffinity="0" group="1" rgba="1 0.423529 0.0392157 1" name="link_4_visual" mesh="link_4_vis" />
+                                    <geom pos="0 0 -0.011" type="mesh" contype="0" rgba="1 0.423529 0.0392157 1" mesh="link_4" name="link_4_collision" />
+                                    
+                                    
+                                    
+                                    <body name="link_5" pos="0 0.2125 0" euler="-1.5708 0 0">
+                                        <inertial pos="5.7e-05 0.014468 0.062938" euler="0 0 -3.141593" mass="1.889" diaginertia="0.0138359953358589 0.0116859337751969 0.00571863785412578" />
+                                        <joint name="joint_5" pos="0 0 0" axis="0 0 1" limited="true" range="-2.96706 2.96706" damping="0.1" />
+                                        <geom pos="0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.4 0.4 0.4 1" name="link_5_visual" mesh="link_5_vis" />
+                                        <geom pos="0 0 0" type="mesh" contype="0" rgba="0.4 0.4 0.4 1" mesh="link_5" name="link_5_collision" />
+                                        
+                                        
+                                        
+                                        <body name="link_6" pos="0 0 0.1875" euler="1.5708 3.141593 3.141593">
+                                            <inertial pos="3.63e-04 0.016982 -0.019731" euler="0 0 -3.141593" mass="2.32" diaginertia="0.00732758787216765 0.00477633755783711 0.00606797638550296" />
+                                            <joint name="joint_6" pos="0 0 0" axis="0 0 1" limited="true" range="-2.0944 2.0944" damping="0.1" />
+                                            <geom pos="0 0 -0.061" type="mesh" contype="0" conaffinity="0" group="1" mesh="link_6_vis" name="link_6_visual" rgba="1 0.423529 0.0392157 1" />
+                                            <geom pos="0 0 -0.061" type="mesh" contype="0" rgba="1 0.423529 0.0392157 1" mesh="link_6" name="link_6_collision" />
+                                            
+                                            
+                                            
+                                            <body name="link_7" pos="0 -0.081 0" euler="-1.5708 3.141593 0">
+                                                <inertial pos="0.001904 -9.3e-05 0.018862" euler="0 0 0" mass="0.863" diaginertia="0.000884 0.000888 0.001105" />
+                                                <joint name="joint_7" pos="0 0 0" axis="0 0 1" limited="true" range="-3.05433 3.05433" damping="0.1" />
+                                                <geom pos="0 0 0" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.4 0.4 0.4 1" mesh="link_7_vis" name="link_7_visual" />
+                                                <geom pos="0 0 0" type="mesh" contype="0" rgba="0.4 0.4 0.4 1" mesh="link_7" name="link_7_collision" />
+                                                <body name="right_hand" pos="0 0 0.044" quat="0 0 0 1">
+                                                    <!-- This camera points out from the eef. -->
+                                                    <camera mode="fixed" name="eye_in_hand" pos="0.05 0 0" quat="0 0.707108 0.707108 0" fovy="75"/>
+                                                    <!-- To add gripper -->
+                                                </body>
+                                            </body>
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+    </worldbody>
+</mujoco>
