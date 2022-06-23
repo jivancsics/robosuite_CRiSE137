@@ -6,7 +6,7 @@ from robosuite.utils.mjcf_utils import xml_path_completion
 
 class IIWA_extended(ManipulatorModel):
     """
-    IIWA is a bright and spunky robot created by KUKA
+    IIWA14_extended is a bright and spunky robot created by KUKA mounted upside down on a frame with two linear rails
 
     Args:
         idn (int or str): Number or some other unique identification string for this robot instance
@@ -29,7 +29,7 @@ class IIWA_extended(ManipulatorModel):
 
     @property
     def init_qpos(self):
-        return np.array([0.000, 0.000, 0.000, 0.650, 0.000, -1.5708, 0.000, -2.22, 0.000])
+        return np.array([0.000, 0.000, 0.000, 0.35, 0.000, -1.5708, 0.000, -1.9208, 0.000])
 
     @property
     def base_xpos_offset(self):
