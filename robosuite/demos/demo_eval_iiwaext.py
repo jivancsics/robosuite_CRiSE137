@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     #model = SAC('MlpPolicy', eval_env)
 
-    model_path = 'logs_lift_kukaextended/best_model.zip'
+    model_path = 'Logs_Lift/best_model.zip'
     model = SAC.load(model_path, env=env)
  
 

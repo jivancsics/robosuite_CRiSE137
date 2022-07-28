@@ -65,7 +65,7 @@ def make_env(env_id, rank, seed=0):
                 reward_shaping=True,  # use dense rewards
                 control_freq=20,  # control should happen fast enough so that simulation looks smooth
                 horizon=1000,
-                controller_configs=load_controller_config(default_controller="OSC_POSITION"),
+                controller_configs=load_controller_config(default_controller="OSC_POSE"),
             )
         )
         env.seed(seed + rank)
