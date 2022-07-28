@@ -1,0 +1,36 @@
+The following extensions are done to Robosuite to implement the robot setup in the robot lab. The setup consists of an upside down mounted Kuka LBR iiwa 14 on two linear rails within a frame with 9 DoF in total.
+Extiontions:
+
+- robot Kuka LBR iiwa 14 upside down on two linear rails with frame:
+	robosuite/models/assets/robots/iiwa14_extended
+	robosuite/models/robots/manipulators/iiwa14_extended_robot.py
+	name = 'IIWA14_extended'
+	can be used the same way as 'IIWA' in the different environments, grippers and controllers
+	
+- robot Kuka LBR iiwa 7 upside down on two linear rails with frame:
+	robosuite/models/assets/robots/iiwa_extended
+	robosuite/models/robots/manipulators/iiwa_extended_robot.py
+	name = 'IIWA_extended'
+	can be used the same way as 'IIWA' in the different environments, grippers and controllers
+	
+- arena Arena with table from lab, similar to 'TableArena'
+	robosuite/models/assets/arenas/kuka_linear_table_arena.xml
+	robosuite/models/arenas/kuka_liner_table_arena.py
+	name = 'KukaLinearTableArena'
+	
+- environments Lift Task in 'KukaLinearTableArena'
+	robosuite/environments/manipulation/kuka_linear_lift.py
+	name = 'KukaLinearLift'
+	adaptation from 'Lift'
+	
+- demos scripts for training and evaluating the new robots in different environments
+	robosuite/demos/demo_train_iiwaext.py
+	robosuite/demos/demo_eval_iiwaext.py
+	
+- demos Logs from trained environments
+	robosuite/demos/Logs_Door
+	robosuite/demos/Logs_Lift
+	robosuite/demos/Logs_Wipe
+	robosuite/demos/Logs_PickPlaceSingle
+	robosuite/demos/Logs_KukaLinearLift
+	
