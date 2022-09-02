@@ -4,16 +4,16 @@ from robosuite.models.robots.manipulators.manipulator_model import ManipulatorMo
 from robosuite.utils.mjcf_utils import xml_path_completion
 
 
-class IIWA14_extended(ManipulatorModel):
+class IIWA14_extended_nolinear(ManipulatorModel):
     """
-    IIWA14_extended is a bright and spunky robot created by KUKA mounted upside down on a frame with two linear rails
+    IIWA14_extended is a bright and spunky robot created by KUKA mounted upside down on a frame. The linear axis are disabled in this model
 
     Args:
         idn (int or str): Number or some other unique identification string for this robot instance
     """
 
     def __init__(self, idn=0):
-        super().__init__(xml_path_completion("robots/iiwa14_extended/robot.xml"), idn=idn)
+        super().__init__(xml_path_completion("robots/iiwa14_extended_nolinear/robot.xml"), idn=idn)
 
     @property
     def default_mount(self):
@@ -30,8 +30,8 @@ class IIWA14_extended(ManipulatorModel):
     @property
     def init_qpos(self):
         #return np.array([0.000, 0.000, 0.000, 0.35, 0.000, -1.5708, 0.000, -1.9208, -1.570796])
-        return np.array([0.000, -0.500, -7.287e-02,  3.749e-01,-6.545e-02, -1.718e+00,  2.973e-02, -2.092e+00,-1.426e+00])
-        #return np.array([-7.287e-02,  3.749e-01,-6.545e-02, -1.718e+00,  2.973e-02, -2.092e+00,-1.426e+00])
+        #return np.array([0.000, -0.500, -7.287e-02,  3.749e-01,-6.545e-02, -1.718e+00,  2.973e-02, -2.092e+00,-1.426e+00])
+        return np.array([-7.287e-02,  3.749e-01,-6.545e-02, -1.718e+00,  2.973e-02, -2.092e+00,-1.426e+00])
         #return np.array([0.000, 0.000, 0.000, 0.650, 0.000, -1.890, 0.000, 0.600, 0.000])
 
         #return np.array([-0.92930329, -0.03923664, 0.86277056, -1.77551591, 0.04806059, -1.80642223, 1.55168235, 0.8, 1.2])

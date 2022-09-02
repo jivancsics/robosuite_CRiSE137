@@ -17,6 +17,7 @@ ROBOT_CLASS_MAPPING = {
     "UR5e": SingleArm,
     "IIWA_extended": SingleArm,
     "IIWA14_extended": SingleArm,
+    "IIWA14_extended_nolinear": SingleArm,
 }
 
 BIMANUAL_ROBOTS = {k.lower() for k, v in ROBOT_CLASS_MAPPING.items() if v == Bimanual}

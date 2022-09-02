@@ -1,9 +1,9 @@
-<mujoco model="iiwa14_extended">
+<mujoco model="iiwa14_extended_nolinear">
     <actuator>
         <!-- Physical limits of the actuator. -->
         <!-- Values taken from kuka_lbr_iiwa_brochure_en.pdf (see website) -->
-        <motor ctrllimited="true" ctrlrange="-800 800" joint="joint" name="force_f0"/>
-        <motor ctrllimited="true" ctrlrange="-1000 1000" joint="joint_0" name="force_f1"/>
+        <!--motor ctrllimited="true" ctrlrange="-800 800" joint="joint" name="force_f0"/>
+        <motor ctrllimited="true" ctrlrange="-1000 1000" joint="joint_0" name="force_f1"/-->
         <motor ctrllimited="true" ctrlrange="-320.0 320.0" joint="joint_1" name="torq_j1"/>
         <motor ctrllimited="true" ctrlrange="-320.0 320.0" joint="joint_2" name="torq_j2"/>
         <motor ctrllimited="true" ctrlrange="-176.0 176.0" joint="joint_3" name="torq_j3"/>
@@ -73,7 +73,7 @@
                
                 <inertial diaginertia="100 100 100" mass="40" pos="0 0 0"/> 
             
-                <joint name="joint" type="slide" pos="0 0 0" axis="0 1 0" limited="true" range="-1.243 1.243" damping="0.1" />               
+                <!--joint name="joint" type="slide" pos="0 0 0" axis="0 1 0" limited="true" range="-1.243 1.243" damping="0.1" /-->               
         
                 <body name="slide1_visual" euler="3.141593 0 0" pos="0 0 0">
                     <geom type="mesh" pos="0 0 -0.034" contype="0" conaffinity="0" group="1" rgba="0.4 0.4 0.4 1" name="rail_2_visual" mesh="rail_2" euler="0 0 3.141593"/>
@@ -90,12 +90,12 @@
             	    
             	</body>
             	
-                <body name="slide2" pos="0 0 0.1105"> 
-                <!--body name="slide2" pos="-0.50 0 0.1105"--> 
+                <!--body name="slide2" pos="0 0 0.1105"--> 
+                <body name="slide2" pos="-0.50 0 0.1105"> 
         
                     <inertial diaginertia="100 100 100" mass="10.495" pos="0 0 0"/> 
             
-                    <joint name="joint_0" type="slide" pos="0 0 0" axis="1 0 0" limited="true" range="-0.8625 0.8625" damping="0.1"/>
+                    <!--joint name="joint_0" type="slide" pos="0 0 0" axis="1 0 0" limited="true" range="-0.8625 0.8625" damping="0.1" /-->
             
                     <geom type="mesh" pos="0 0 -0.0297" contype="0" conaffinity="0" group="1" rgba="0.4 0.4 0.4 1" name="slide_2_visual" mesh="slide_2" euler="3.141593 0 1.570796"/>
                     
