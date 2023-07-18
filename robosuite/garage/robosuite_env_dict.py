@@ -62,6 +62,6 @@ robosuiteml_test_args_kwargs = {
 }
 
 ML10_ARGS_KWARGS = dict(
-    train=robosuiteml_train_args_kwargs_train_args_kwargs,
-    test=robosuiteml_test_args_kwargs_test_args_kwargs,
+    train=robosuiteml_train_args_kwargs,
+    test=robosuiteml_test_args_kwargs,
 )
