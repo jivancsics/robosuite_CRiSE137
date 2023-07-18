@@ -51,7 +51,15 @@ class GymWrapper(Wrapper, Env):
 
         # Gym specific attributes
         self.env.spec = None
-        self.metadata = None
+
+        # According to https://www.gymlibrary.dev/api/core/, self.metadata must be set to follow Gym's Environment
+        # design rules. Due to the structure of Robosuite, the following render modes may be chosen.
+        self.metadata = {'render_modes': [None, 'human']}
+        robosuite_render_modes = ["has_renderer=False", "renderer=default or mujoco"]
+        translator_dict = dict(zip(self.metadata['render_modes'], robosuite_render_modes))
+        print('Make sure that render modes got explicitly set via the following aliases ',
+              translator_dict, 'in suite.make()!')
+
 
         # set up observation and action spaces
         obs = self.env.reset()
