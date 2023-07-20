@@ -6,12 +6,12 @@ import pickle
 # from garage.envs import GymEnv
 
 
-class SawyerBlockliftingRobosuiteEnv:
+class SawyerStackRobosuiteEnv:
     """
-    This class encapsulates the lifting task of Robosuite and shall serve the similar behaviour of MetaWorld
-    environments after instantiation via metaworld.ML10().
+    This class encapsulates the block stacking task defined in Robosuite. It shall serve the similar behaviour of
+    MetaWorld environments after instantiation via metaworld.ML10().
 
-    Class variables (inherited from args in robosuite/environments/manipulation/lift.py):
+    Class variables (inherited from args in robosuite/environments/manipulation/stack.py):
 
         env_configuration (str): Specifies how to position the robots within the environment (default is "default").
             For most single arm environments, this argument has no impact on the robot setup.
@@ -123,36 +123,34 @@ class SawyerBlockliftingRobosuiteEnv:
     """
 
     def __init__(self):
-        self.use_camera_obs = False
-        self.has_offscreen_renderer = False
-        self.has_renderer = False
-        self.reward_shaping = True  # use dense rewards --> MetaWorld also judges moves more frequently
-        self.control_freq = 20
-        self.horizon = 500  # max episode length
-        self.env_configuration = "default"
-        self.controller_configs = None
-        self.gripper_types = "default"
-        self.initialization_noise = "default"
-        self.table_full_size = (0.8, 0.8, 0.05)
-        self.table_friction = (1.0, 5e-3, 1e-4)
-        self.use_object_obs = True
-        self.reward_scale = 1.0
-        self.placement_initializer = None
-        self.render_camera = "frontview"
-        self.render_collision_mesh = False
-        self.render_visual_mesh = True
-        self.render_gpu_device_id = -1
-        self.ignore_done = False
-        # choose if environment should get reloaded completely at each env.reset() call =>
-        # new initial obj and target position every env.reset()?? Therefore False
-        self.hard_reset = True
-        self.camera_names = "agentview"
-        self.camera_heights = 256
-        self.camera_widths = 256
-        self.camera_depths = False
-        self.camera_segmentations = None  # {None, instance, class, element}
-        self.renderer = "mujoco"
-        self.renderer_config = None
+        self.env_configuration = "default",
+        self.controller_configs = None,
+        self.gripper_types = "default",
+        self.initialization_noise = "default",
+        self.table_full_size = (0.8, 0.8, 0.05),
+        self.table_friction = (1.0, 5e-3, 1e-4),
+        self.use_camera_obs = False,
+        self.use_object_obs = True,
+        self.reward_scale = 1.0,
+        self.reward_shaping = True,
+        self.placement_initializer = None,
+        self.has_renderer = False,
+        self.has_offscreen_renderer = False,
+        self.render_camera = "frontview",
+        self.render_collision_mesh = False,
+        self.render_visual_mesh = True,
+        self.render_gpu_device_id = -1,
+        self.control_freq = 20,
+        self.horizon = 500,
+        self.ignore_done = False,
+        self.hard_reset = True,
+        self.camera_names = "agentview",
+        self.camera_heights = 256,
+        self. camera_widths = 256,
+        self.camera_depths = False,
+        self.camera_segmentations = None,
+        self.renderer = "mujoco",
+        self.renderer_config = None,
 
         # Necessary for setting the subtasks correctly
         self._set_task_called = False
@@ -173,27 +171,26 @@ class SawyerBlockliftingRobosuiteEnv:
     def __call__(self):
         return GymWrapper(
             suite.make(
-                "Lift",
-                robots="Sawyer",
-                use_camera_obs=self.use_camera_obs,
-                has_offscreen_renderer=self.has_offscreen_renderer,
-                has_renderer=self.has_renderer,
-                reward_shaping=self.reward_shaping,
-                control_freq=self.control_freq,
-                horizon=self.horizon,
+                "Stack",
                 env_configuration=self.env_configuration,
                 controller_configs=self.controller_configs,
                 gripper_types=self.gripper_types,
                 initialization_noise=self.initialization_noise,
                 table_full_size=self.table_full_size,
                 table_friction=self.table_friction,
+                use_camera_obs=self.use_camera_obs,
                 use_object_obs=self.use_object_obs,
                 reward_scale=self.reward_scale,
+                reward_shaping=self.reward_shaping,
                 placement_initializer=self.placement_initializer,
+                has_renderer=self.has_renderer,
+                has_offscreen_renderer=self.has_offscreen_renderer,
                 render_camera=self.render_camera,
                 render_collision_mesh=self.render_collision_mesh,
                 render_visual_mesh=self.render_visual_mesh,
                 render_gpu_device_id=self.render_gpu_device_id,
+                control_freq=self.control_freq,
+                horizon=self.horizon,
                 ignore_done=self.ignore_done,
                 hard_reset=self.hard_reset,
                 camera_names=self.camera_names,

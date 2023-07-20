@@ -1,5 +1,6 @@
 import robosuite as suite
 from robosuite.wrappers import GymWrapper
+import pickle
 
 
 # from garage.envs import GymEnv
@@ -10,7 +11,7 @@ class SawyerPickplacecanRobosuiteEnv:
     This class encapsulates the single pick and place Robosuite task for the object can. It shall serve the similar
     behaviour of MetaWorld environments after instantiation via metaworld.ML10().
 
-    Args (taken from robosuite/environments/manipulation/pick_place.py):
+    Class variables (inherited from args in robosuite/environments/manipulation/pick_place.py):
         robots (str or list of str): Specification for specific robot arm(s) to be instantiated within this env
             (e.g: "Sawyer" would generate one arm; ["Panda", "Panda", "Sawyer"] would generate three robot arms)
             Note: Must be a single single-arm robot!
@@ -138,10 +139,6 @@ class SawyerPickplacecanRobosuiteEnv:
             If not None, multiple types of segmentations can be specified. A [list of str / str or None] specifies
             [multiple / a single] segmentation(s) to use for all cameras. A list of list of str specifies per-camera
             segmentation setting(s) to use.
-
-    Raises:
-        AssertionError: [Invalid object type specified]
-        AssertionError: [Invalid number of robots specified]
     """
 
     def __init__(self):
@@ -168,14 +165,30 @@ class SawyerPickplacecanRobosuiteEnv:
         self.control_freq = 20
         self.horizon = 500
         self.ignore_done = False
-        self.hard_reset = False  # once again no hard reset
+        self.hard_reset = True
         self.camera_names = "agentview"
         self.camera_heights = 256
         self.camera_widths = 256
         self.camera_depths = False
-        self.camera_segmentations = None  # {None, instance, class, element}
+        self.camera_segmentations = None
         self.renderer = "mujoco"
         self.renderer_config = None
+
+        # Necessary for setting the subtasks correctly
+        self._set_task_called = False
+        self._freeze_rand_vec = True
+        self._last_rand_vec = None
+
+    def set_task(self, task):
+        self._set_task_called = True
+        data = pickle.loads(task.data)
+        del data["env_cls"]
+        self._last_rand_vec = data["rand_vec"]
+        self._freeze_rand_vec = True
+        self._last_rand_vec = data["rand_vec"]
+        del data["rand_vec"]
+        # initialize self.placement_initializer correctly here!!!
+        # self.placement_initializer(self._last_rand_vec)
 
     def __call__(self):
         return GymWrapper(
@@ -210,7 +223,7 @@ class SawyerPickplacecanRobosuiteEnv:
                 camera_heights=self.camera_heights,
                 camera_widths=self.camera_widths,
                 camera_depths=self.camera_depths,
-                camera_segmentations=self.camera_segmentations,  # {None, instance, class, element}
+                camera_segmentations=self.camera_segmentations,
                 renderer=self.renderer,
                 renderer_config=self.renderer_config,
             )
