@@ -1,6 +1,8 @@
 import robosuite as suite
 from robosuite.wrappers import GymWrapper
 import pickle
+from robosuite.utils.placement_samplers import UniformRandomSampler, SequentialCompositeSampler
+import numpy as np
 
 
 # from garage.envs import GymEnv
@@ -184,13 +186,50 @@ class SawyerNutassemblyroundRobosuiteEnv:
         self._freeze_rand_vec = True
         self._last_rand_vec = data["rand_vec"]
         del data["rand_vec"]
-        # initialize self.placement_initializer correctly here!!!
-        # self.placement_initializer(self._last_rand_vec)
+
+        # values of square nut do not matter (single-nut task), but they must not equal the round nut's values
+        x_range_square = [-self._last_rand_vec[0], -self._last_rand_vec[0]]
+        y_range_square = [-self._last_rand_vec[1], -self._last_rand_vec[1]]
+        rotation_square = self._last_rand_vec[2]
+        x_range_round = [self._last_rand_vec[0], self._last_rand_vec[0]]
+        y_range_round = [self._last_rand_vec[1], self._last_rand_vec[1]]
+        rotation_round = self._last_rand_vec[2]
+
+        self.placement_initializer = SequentialCompositeSampler(name="ObjectSampler")
+
+        # Add square nut and round nut to the sequential object sampler
+        self.placement_initializer.append_sampler(
+            sampler=UniformRandomSampler(
+                name="SquareNutSampler",
+                x_range=x_range_square,
+                y_range=y_range_square,
+                rotation=rotation_square,
+                rotation_axis="z",
+                ensure_object_boundary_in_range=False,
+                ensure_valid_placement=True,
+                reference_pos=np.array((0, 0, 0.82)),
+                z_offset=0.02,
+            )
+        )
+
+        self.placement_initializer.append_sampler(
+            sampler=UniformRandomSampler(
+                name="RoundNutSampler",
+                x_range=x_range_round,
+                y_range=y_range_round,
+                rotation=rotation_round,
+                rotation_axis="z",
+                ensure_object_boundary_in_range=False,
+                ensure_valid_placement=True,
+                reference_pos=np.array((0, 0, 0.82)),
+                z_offset=0.02,
+            )
+        )
 
     def __call__(self):
         return GymWrapper(
             suite.make(
-                "NutAssemblyRound",
+                "NutAssembly",
                 robots="Sawyer",
                 env_configuration=self.env_configuration,
                 controller_configs=self.controller_configs,

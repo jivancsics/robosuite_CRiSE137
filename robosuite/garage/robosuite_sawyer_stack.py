@@ -1,6 +1,10 @@
 import robosuite as suite
 from robosuite.wrappers import GymWrapper
 import pickle
+from robosuite.models.objects import BoxObject
+from robosuite.utils.mjcf_utils import CustomMaterial
+from robosuite.utils.placement_samplers import UniformRandomSampler, SequentialCompositeSampler
+import numpy as np
 
 
 # from garage.envs import GymEnv
@@ -165,8 +169,85 @@ class SawyerStackRobosuiteEnv:
         self._freeze_rand_vec = True
         self._last_rand_vec = data["rand_vec"]
         del data["rand_vec"]
-        # initialize self.placement_initializer correctly here!!!
-        # self.placement_initializer(self._last_rand_vec)
+
+        x_range_A = [self._last_rand_vec[0], self._last_rand_vec[0]]
+        y_range_A = [self._last_rand_vec[1], self._last_rand_vec[1]]
+        rotation_A = self._last_rand_vec[2]
+        x_range_B = [self._last_rand_vec[3], self._last_rand_vec[3]]
+        y_range_B = [self._last_rand_vec[4], self._last_rand_vec[4]]
+        rotation_B = self._last_rand_vec[5]
+
+        # initialize the two boxes
+        tex_attrib = {
+            "type": "cube",
+        }
+        mat_attrib = {
+            "texrepeat": "1 1",
+            "specular": "0.4",
+            "shininess": "0.1",
+        }
+        redwood = CustomMaterial(
+            texture="WoodRed",
+            tex_name="redwood",
+            mat_name="redwood_mat",
+            tex_attrib=tex_attrib,
+            mat_attrib=mat_attrib,
+        )
+        greenwood = CustomMaterial(
+            texture="WoodGreen",
+            tex_name="greenwood",
+            mat_name="greenwood_mat",
+            tex_attrib=tex_attrib,
+            mat_attrib=mat_attrib,
+        )
+
+        cubeA = BoxObject(
+            name="cubeA",
+            size_min=[0.02, 0.02, 0.02],
+            size_max=[0.02, 0.02, 0.02],
+            rgba=[1, 0, 0, 1],
+            material=redwood,
+        )
+        cubeB = BoxObject(
+            name="cubeB",
+            size_min=[0.025, 0.025, 0.025],
+            size_max=[0.025, 0.025, 0.025],
+            rgba=[0, 1, 0, 1],
+            material=greenwood,
+        )
+
+        self.placement_initializer = SequentialCompositeSampler(name="ObjectSampler")
+
+        # Add square nut and round nut to the sequential object sampler
+        self.placement_initializer.append_sampler(
+            sampler=UniformRandomSampler(
+                name="CubeASampler",
+                x_range=x_range_A,
+                y_range=y_range_A,
+                rotation=rotation_A,
+                ensure_object_boundary_in_range=False,
+                ensure_valid_placement=True,
+                reference_pos=np.array((0, 0, 0.8)),
+                z_offset=0.01,
+            )
+        )
+
+        self.placement_initializer.append_sampler(
+            sampler=UniformRandomSampler(
+                name="CubeBSampler",
+                x_range=x_range_B,
+                y_range=y_range_B,
+                rotation=rotation_B,
+                ensure_object_boundary_in_range=False,
+                ensure_valid_placement=True,
+                reference_pos=np.array((0, 0, 0.8)),
+                z_offset=0.01,
+            )
+        )
+
+        self.placement_initializer.add_objects_to_sampler(sampler_name="CubeASampler", mujoco_objects=cubeA)
+        self.placement_initializer.add_objects_to_sampler(sampler_name="CubeBSampler", mujoco_objects=cubeB)
+
 
     def __call__(self):
         return GymWrapper(

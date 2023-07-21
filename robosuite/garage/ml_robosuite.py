@@ -64,20 +64,66 @@ def _make_tasks(classes, args_kwargs, seed=None):
     for env_name, args in args_kwargs.items():
         assert len(args["args"]) == 0
         env_cls = classes[env_name]
-        env = env_cls()
-        env._freeze_rand_vec = False
-        env._set_task_called = True
+        env_cls._freeze_rand_vec = False
+        env_cls._set_task_called = True
         rand_vecs = []
         kwargs = args["kwargs"].copy()
         del kwargs["task_id"]
-#         env._set_task_inner(**kwargs)
         for _ in range(_N_GOALS):
-            # env.reset()
-            rand_vecs.append(env._last_rand_vec)
+            if env_name is "nut-assembly-mixed":
+                y_pos_square = np.random.uniform(low=0.10, high=0.225)
+                x_pos_square = np.random.uniform(low=-0.13, high=-0.10)
+                rot_square = np.random.uniform(low=0, high=np.pi/2.0)
+                y_pos_round = np.random.uniform(low=-0.225, high=-0.10)
+                x_pos_round = np.random.uniform(low=-0.13, high=-0.10)
+                rot_round = np.random.uniform(low=0, high=np.pi/2.0)
+                rand_vecs.append([x_pos_square, y_pos_square, rot_square, x_pos_round, y_pos_round, rot_round])
+            elif env_name is "nut-assembly-square":
+                y_pos_square = np.random.uniform(low=0.10, high=0.225)
+                x_pos_square = np.random.uniform(low=-0.13, high=-0.10)
+                rot_square = np.random.uniform(low=0, high=np.pi/2.0)
+                rand_vecs.append([x_pos_square, y_pos_square, rot_square])
+            elif env_name is "nut-assembly-round":
+                y_pos_round = np.random.uniform(low=-0.225, high=-0.10)
+                x_pos_round = np.random.uniform(low=-0.13, high=-0.10)
+                rot_round = np.random.uniform(low=0, high=np.pi/2.0)
+                rand_vecs.append([x_pos_round, y_pos_round, rot_round])
+            elif env_name is "blocklifting":
+                x_pos = np.random.uniform(low=-0.2, high=0.2)
+                y_pos = np.random.uniform(low=-0.2, high=0.2)
+                rot = np.random.uniform(low=0, high=np.pi/2.0)
+                rand_vecs.append([x_pos, y_pos, rot])
+            elif env_name is "stack-blocks":
+                x_pos_A = np.random.uniform(low=-0.2, high=0.2)
+                y_pos_A = np.random.uniform(low=-0.2, high=0.2)
+                rot_A = np.random.uniform(low=0, high=np.pi/2.0)
+                x_pos_B = np.random.uniform(low=-0.2, high=0.2)
+                y_pos_B = np.random.uniform(low=-0.2, high=0.2)
+                rot_B = np.random.uniform(low=0, high=np.pi/2.0)
+                rand_vecs.append([x_pos_A, y_pos_A, rot_A, x_pos_B, y_pos_B, rot_B])
+            elif env_name in ("pick-place-mixed", "pick-place-bread", "pick-place-milk",
+                              "pick-place-cereal", "pick-place-can"):
+                bin1_x_pos = np.random.uniform(low=-0.1, high=0.1)
+                bin2_x_pos = np.random.uniform(low=-0.1, high=0.1)
+                bin1_y_pos = np.random.uniform(low=-0.27, high=-0.25)
+                bin2_y_pos = np.random.uniform(low=0.28, high=0.3)
+                bin12_z_pos = 0.8    # equal table height
+                rand_vecs.append([bin1_x_pos, bin1_y_pos, bin2_x_pos, bin2_y_pos, bin12_z_pos])
+            elif env_name is "door-open":
+                x_pos = np.random.uniform(low=0.07, high=0.09)
+                y_pos = np.random.uniform(low=-0.01, high=0.01)
+                rot = np.random.uniform(low=-np.pi/2.0-0.25, high=-np.pi/2.0)
+                rand_vecs.append([x_pos, y_pos, rot])
+            elif env_name is "wipe-board":
+                # TODO:
+                # - Continue here: learn how to modify the wipe line! (robosuite/environments/manipulation/wipe.py)
+                # - Modify robosuite/wrappers/gym_wrapper.py GymWrapper self.env.spec (line 53) to comply with Garage!
+                # - Step through the robosuite_maml example
+                pass
+
         unique_task_rand_vecs = np.unique(np.array(rand_vecs), axis=0)
         assert unique_task_rand_vecs.shape[0] == _N_GOALS
 
-        env.close()
         for rand_vec in rand_vecs:
             kwargs = args["kwargs"].copy()
             del kwargs["task_id"]

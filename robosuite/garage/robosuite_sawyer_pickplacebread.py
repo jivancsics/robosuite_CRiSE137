@@ -184,13 +184,13 @@ class SawyerPickplacebreadRobosuiteEnv:
         self._freeze_rand_vec = True
         self._last_rand_vec = data["rand_vec"]
         del data["rand_vec"]
-        # initialize self.placement_initializer correctly here!!!
-        # self.placement_initializer(self._last_rand_vec)
+        self.bin1_pos = [self._last_rand_vec[0], self._last_rand_vec[1], self._last_rand_vec[4]]
+        self.bin2_pos = [self._last_rand_vec[2], self._last_rand_vec[3], self._last_rand_vec[4]]
 
     def __call__(self):
         return GymWrapper(
             suite.make(
-                "PickPlaceBread",
+                "PickPlace",
                 robots="Sawyer",
                 env_configuration=self.env_configuration,
                 controller_configs=self.controller_configs,

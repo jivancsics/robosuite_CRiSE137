@@ -143,11 +143,10 @@ class RobosuiteTaskSampler(TaskSampler):
 
     """
 
-    def __init__(self, benchmark, kind, wrapper=None, add_env_onehot=False):
+    def __init__(self, benchmark, kind, wrapper=None):
         self._benchmark = benchmark
         self._kind = kind
         self._inner_wrapper = wrapper
-        self._add_env_onehot = add_env_onehot
         if kind == 'train':
             self._classes = benchmark.train_classes
             self._tasks = benchmark.train_tasks
@@ -157,12 +156,7 @@ class RobosuiteTaskSampler(TaskSampler):
         else:
             raise ValueError('kind must be either "train" or "test", '
                              f'not {kind!r}')
-        self._task_indices = {}
-        if add_env_onehot:
-            if kind == 'test' or 'metaworld.ML' in repr(type(benchmark)):
-                raise ValueError('add_env_onehot should only be used with '
-                                 f'multi-task benchmarks, not {benchmark!r}')
-            self._task_indices = {
+        self._task_indices = {
                 env_name: index
                 for (index, env_name) in enumerate(self._classes.keys())
             }
@@ -224,7 +218,6 @@ class RobosuiteTaskSampler(TaskSampler):
 
         # Avoid pickling the entire task sampler into every EnvUpdate
         inner_wrapper = self._inner_wrapper
-        add_env_onehot = self._add_env_onehot
         task_indices = self._task_indices
 
         def wrap(env, task):
@@ -240,10 +233,6 @@ class RobosuiteTaskSampler(TaskSampler):
             """
             env = GymEnv(env, max_episode_length=env.max_path_length)
             env = TaskNameWrapper(env, task_name=task.env_name)
-            if add_env_onehot:
-                env = TaskOnehotWrapper(env,
-                                        task_index=task_indices[task.env_name],
-                                        n_total_tasks=len(task_indices))
             if inner_wrapper is not None:
                 env = inner_wrapper(env, task)
             return env

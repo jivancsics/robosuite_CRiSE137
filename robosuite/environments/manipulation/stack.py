@@ -353,8 +353,9 @@ class Stack(SingleArmEnv):
         cubes = [self.cubeA, self.cubeB]
         # Create placement initializer
         if self.placement_initializer is not None:
-            self.placement_initializer.reset()
-            self.placement_initializer.add_objects(cubes)
+            if self.placement_initializer.mujoco_objects is None:
+                self.placement_initializer.reset()
+                self.placement_initializer.add_objects(cubes)
         else:
             self.placement_initializer = UniformRandomSampler(
                 name="ObjectSampler",
@@ -372,7 +373,7 @@ class Stack(SingleArmEnv):
         self.model = ManipulationTask(
             mujoco_arena=mujoco_arena,
             mujoco_robots=[robot.robot_model for robot in self.robots],
-            mujoco_objects=cubes,
+            mujoco_objects=self.placement_initializer.mujoco_objects,
         )
 
     def _setup_references(self):

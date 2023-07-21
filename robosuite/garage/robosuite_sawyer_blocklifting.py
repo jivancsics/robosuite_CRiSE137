@@ -1,6 +1,8 @@
 import robosuite as suite
 from robosuite.wrappers import GymWrapper
 import pickle
+from robosuite.utils.placement_samplers import UniformRandomSampler
+import numpy as np
 
 
 # from garage.envs import GymEnv
@@ -167,8 +169,21 @@ class SawyerBlockliftingRobosuiteEnv:
         self._freeze_rand_vec = True
         self._last_rand_vec = data["rand_vec"]
         del data["rand_vec"]
-        # initialize self.placement_initializer correctly here!!!
-        # self.placement_initializer(self._last_rand_vec)
+
+        x_range = [self._last_rand_vec[0], self._last_rand_vec[0]]
+        y_range = [self._last_rand_vec[1], self._last_rand_vec[1]]
+        rotation = self._last_rand_vec[2]
+
+        self.placement_initializer = UniformRandomSampler(
+            name="ObjectSampler",
+            x_range=x_range,    # dimension of the table: (0.8, 0.8, 0.05) --> sampling range 1/2 of its surface
+            y_range=y_range,
+            rotation=rotation,
+            ensure_object_boundary_in_range=False,
+            ensure_valid_placement=True,
+            reference_pos=np.array((0, 0, 0.8)),
+            z_offset=0.01,
+        )
 
     def __call__(self):
         return GymWrapper(
