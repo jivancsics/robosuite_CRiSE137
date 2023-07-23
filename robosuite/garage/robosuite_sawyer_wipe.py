@@ -1,6 +1,7 @@
 import robosuite as suite
 from robosuite.wrappers import GymWrapper
 import pickle
+import numpy as np
 
 
 # from garage.envs import GymEnv
@@ -143,6 +144,9 @@ class SawyerWipeRobosuiteEnv:
         self.task_config = None
         self.renderer = "mujoco"
         self.renderer_config = None
+        self.metalearning = True
+        self.start_pos = None
+        self.path_pos = None
 
         # Necessary for setting the subtasks correctly
         self._set_task_called = False
@@ -159,6 +163,17 @@ class SawyerWipeRobosuiteEnv:
         del data["rand_vec"]
         # initialize self.placement_initializer correctly here!!!
         # self.placement_initializer(self._last_rand_vec)
+        self.start_pos = self._last_rand_vec[:2]
+        self.path_pos = np.zeros((len(self._last_rand_vec[2:]) / 2, 2))
+        row = 0
+        col = 0
+        for i, element in enumerate(self._last_rand_vec[2:]):
+            self.path_pos[row, col] = element
+            col += 1
+            if (i + 1) % 2:
+                col = 0
+                row += 1
+
 
     def __call__(self):
         return GymWrapper(
@@ -191,5 +206,8 @@ class SawyerWipeRobosuiteEnv:
                 task_config=self.task_config,
                 renderer=self.renderer,
                 renderer_config=self.renderer_config,
+                metalearning=self.metalearning,
+                start_pose=self.start_pos,
+                path_pose=self.path_pos,
             )
         )

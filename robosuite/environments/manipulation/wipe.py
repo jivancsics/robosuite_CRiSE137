@@ -4,7 +4,7 @@ from collections import OrderedDict
 import numpy as np
 
 from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
-from robosuite.models.arenas import WipeArena
+from robosuite.garage.ml_wipe_arena import WipeArenaML
 from robosuite.models.tasks import ManipulationTask
 from robosuite.utils.observables import Observable, sensor
 
@@ -26,9 +26,9 @@ DEFAULT_WIPE_CONFIG = {
     "table_height": 0.0,  # Additional height of the table over the default location
     "table_height_std": 0.0,  # Standard deviation to sample different heigths of the table each episode
     "line_width": 0.04,  # Width of the line to wipe (diameter of the pegs)
-    "two_clusters": False,  # if the dirt to wipe is one continuous line or two
+    "two_clusters": False,  # if the dirt to wipe is one continuous line or two; CURRENTLY NOT IMPLEMENTED IN METALEARNING SETTING
     "coverage_factor": 0.6,  # how much of the table surface we cover
-    "num_markers": 100,  # How many particles of dirt to generate in the environment
+    "num_markers": 30,  # How many particles of dirt to generate in the environment
     # settings for thresholds
     "contact_threshold": 1.0,  # Minimum eef force to qualify as contact [N]
     "pressure_threshold": 0.5,  # force threshold (N) to overcome to get increased contact wiping reward
@@ -154,6 +154,14 @@ class Wipe(SingleArmEnv):
             parameters, see the default configuration dict at the top of this file.
             If None is specified, the default configuration will be used.
 
+        metalearning (Bool): Specifies whether the environment is used in a metalearning setting or not.
+
+        start_pos (list): Two-dimensional list that specifies the start position of the dirt path. Is only used
+            if argument metalearning is True.
+
+        path_pos (np.array): "num_markers"- x two-dimensional numpy array that specifies the whole path of the
+        dirt path. Is only used if argument metalearning is True.
+
         Raises:
             AssertionError: [Gripper specified]
             AssertionError: [Bad reward specification]
@@ -189,6 +197,9 @@ class Wipe(SingleArmEnv):
         task_config=None,
         renderer="mujoco",
         renderer_config=None,
+        metalearning=False,
+        start_pos=None,
+        path_pos=None,
     ):
         # Assert that the gripper type is None
         assert (
@@ -263,6 +274,10 @@ class Wipe(SingleArmEnv):
 
         # whether to include and use ground-truth object states
         self.use_object_obs = use_object_obs
+
+        self.metalearning = metalearning
+        self.start_pos = start_pos
+        self.path_pos = path_pos
 
         super().__init__(
             robots=robots,
@@ -499,7 +514,7 @@ class Wipe(SingleArmEnv):
         # Get robot's contact geoms
         self.robot_contact_geoms = self.robots[0].robot_model.contact_geoms
 
-        mujoco_arena = WipeArena(
+        mujoco_arena = WipeArenaML(
             table_full_size=self.table_full_size,
             table_friction=self.table_friction,
             table_offset=self.table_offset,
@@ -645,7 +660,10 @@ class Wipe(SingleArmEnv):
 
         # inherited class should reset positions of objects (only if we're not using a deterministic reset)
         if not self.deterministic_reset:
-            self.model.mujoco_arena.reset_arena(self.sim)
+            if self.metalearning is True:
+                self.model.mujoco_arena.reset_arena(self.sim, self.start_pos, self.path_pos)
+            else:
+                self.model.mujoco_arena.reset_arena(self.sim)
 
         # Reset all internal vars for this wipe task
         self.timestep = 0

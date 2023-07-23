@@ -115,10 +115,46 @@ def _make_tasks(classes, args_kwargs, seed=None):
                 rot = np.random.uniform(low=-np.pi/2.0-0.25, high=-np.pi/2.0)
                 rand_vecs.append([x_pos, y_pos, rot])
             elif env_name is "wipe-board":
+                path_list = []
+                for i in range(env_cls.num_markers):
+                    if i == 0:  # start position
+                        path_list.append(np.random.uniform(-0.4 * 0.9 + 0.01, 0.4 * 0.9 - 0.01))
+                        path_list.append(np.random.uniform(-0.4 * 0.9 + 0.01, 0.4 * 0.9 - 0.01))
+                        path_list.append(np.random.uniform(-np.pi, np.pi))
+                    else:   # rest of the path
+                        if np.random.uniform(0, 1) > 0.7:
+                            direction = path_list[i * 3 - 1] + np.random.normal(0, 0.5)
+                        else:
+                            direction = path_list[i * 3 - 1]
+
+                        posnew0 = path_list[i * 3 - 3] + 0.005 * np.sin(direction)
+                        posnew1 = path_list[i * 3 - 2] + 0.005 * np.cos(direction)
+
+                        # We keep resampling until we get a valid new position that's on the table
+                        while (
+                                abs(posnew0) >= 0.4 * 0.9 + 0.01
+                                or abs(posnew1) >= 0.4 * 0.9 + 0.01
+                        ):
+                            direction += np.random.normal(0, 0.5)
+                            posnew0 = path_list[i * 3 - 3] + 0.005 * np.sin(direction)
+                            posnew1 = path_list[i * 3 - 2] + 0.005 * np.cos(direction)
+
+                        # Append this newly sampled position
+                        path_list.append(posnew0)
+                        path_list.append(posnew1)
+                        path_list.append(direction)
+                    for i, element in enumerate(path_list):
+                        if ((i+1) % 3) == 0:
+                            del path_list[i]
+                rand_vecs.append(path_list)
+
+
                 # TODO:
                 # - Continue here: learn how to modify the wipe line! (robosuite/environments/manipulation/wipe.py)
+                #       CHECK
                 # - Modify robosuite/wrappers/gym_wrapper.py GymWrapper self.env.spec (line 53) to comply with Garage!
                 # - Step through the robosuite_maml example
+                #       TOMORROW WHILE NICOLE @ MASSAGE
                 pass
 
         unique_task_rand_vecs = np.unique(np.array(rand_vecs), axis=0)
