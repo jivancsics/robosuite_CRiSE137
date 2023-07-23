@@ -118,8 +118,9 @@ class WipeArenaML(TableArena):
         # Loop through all visual markers
         for i, marker in enumerate(self.markers):
             # If we're using two clusters, we resample the starting position and direction at the halfway point
-            if self.two_clusters and i == int(np.floor(self.num_markers / 2)):
-                pos = self.sample_start_pos()
+            # Currently not supported in the ML setting
+            # if self.two_clusters and i == int(np.floor(self.num_markers / 2)):
+            #     pos = self.sample_start_pos()
             # Get IDs to the body, geom, and site of each marker
             body_id = sim.model.body_name2id(marker.root_body)
             geom_id = sim.model.geom_name2id(marker.visual_geoms[0])
@@ -136,7 +137,7 @@ class WipeArenaML(TableArena):
             if path_pos is None:
                 pos = self.sample_path_pos(pos)
             else:
-                pos = path_pos[i]
+                pos = path_pos[i:i+2]
 
     def sample_start_pos(self):
         """

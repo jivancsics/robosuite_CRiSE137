@@ -70,36 +70,36 @@ def _make_tasks(classes, args_kwargs, seed=None):
         kwargs = args["kwargs"].copy()
         del kwargs["task_id"]
         for _ in range(_N_GOALS):
-            if env_name is "nut-assembly-mixed":
+            if env_name == "nut-assembly-mixed":
                 y_pos_square = np.random.uniform(low=0.10, high=0.225)
                 x_pos_square = np.random.uniform(low=-0.13, high=-0.10)
                 rot_square = np.random.uniform(low=0, high=np.pi/2.0)
                 y_pos_round = np.random.uniform(low=-0.225, high=-0.10)
                 x_pos_round = np.random.uniform(low=-0.13, high=-0.10)
-                rot_round = np.random.uniform(low=0, high=np.pi/2.0)
+                rot_round = np.random.uniform(low=0, high=np.pi / 2.0)
                 rand_vecs.append([x_pos_square, y_pos_square, rot_square, x_pos_round, y_pos_round, rot_round])
-            elif env_name is "nut-assembly-square":
+            elif env_name == "nut-assembly-square":
                 y_pos_square = np.random.uniform(low=0.10, high=0.225)
                 x_pos_square = np.random.uniform(low=-0.13, high=-0.10)
-                rot_square = np.random.uniform(low=0, high=np.pi/2.0)
+                rot_square = np.random.uniform(low=0, high=np.pi / 2.0)
                 rand_vecs.append([x_pos_square, y_pos_square, rot_square])
-            elif env_name is "nut-assembly-round":
+            elif env_name == "nut-assembly-round":
                 y_pos_round = np.random.uniform(low=-0.225, high=-0.10)
                 x_pos_round = np.random.uniform(low=-0.13, high=-0.10)
-                rot_round = np.random.uniform(low=0, high=np.pi/2.0)
+                rot_round = np.random.uniform(low=0, high=np.pi / 2.0)
                 rand_vecs.append([x_pos_round, y_pos_round, rot_round])
-            elif env_name is "blocklifting":
+            elif env_name == "blocklifting":
                 x_pos = np.random.uniform(low=-0.2, high=0.2)
                 y_pos = np.random.uniform(low=-0.2, high=0.2)
-                rot = np.random.uniform(low=0, high=np.pi/2.0)
+                rot = np.random.uniform(low=0, high=np.pi / 2.0)
                 rand_vecs.append([x_pos, y_pos, rot])
-            elif env_name is "stack-blocks":
+            elif env_name == "stack-blocks":
                 x_pos_A = np.random.uniform(low=-0.2, high=0.2)
                 y_pos_A = np.random.uniform(low=-0.2, high=0.2)
-                rot_A = np.random.uniform(low=0, high=np.pi/2.0)
+                rot_A = np.random.uniform(low=0, high=np.pi / 2.0)
                 x_pos_B = np.random.uniform(low=-0.2, high=0.2)
                 y_pos_B = np.random.uniform(low=-0.2, high=0.2)
-                rot_B = np.random.uniform(low=0, high=np.pi/2.0)
+                rot_B = np.random.uniform(low=0, high=np.pi / 2.0)
                 rand_vecs.append([x_pos_A, y_pos_A, rot_A, x_pos_B, y_pos_B, rot_B])
             elif env_name in ("pick-place-mixed", "pick-place-bread", "pick-place-milk",
                               "pick-place-cereal", "pick-place-can"):
@@ -109,17 +109,17 @@ def _make_tasks(classes, args_kwargs, seed=None):
                 bin2_y_pos = np.random.uniform(low=0.28, high=0.3)
                 bin12_z_pos = 0.8    # equal table height
                 rand_vecs.append([bin1_x_pos, bin1_y_pos, bin2_x_pos, bin2_y_pos, bin12_z_pos])
-            elif env_name is "door-open":
+            elif env_name == "door-open":
                 x_pos = np.random.uniform(low=0.07, high=0.09)
                 y_pos = np.random.uniform(low=-0.01, high=0.01)
-                rot = np.random.uniform(low=-np.pi/2.0-0.25, high=-np.pi/2.0)
+                rot = np.random.uniform(low=-np.pi / 2.0 - 0.25, high=-np.pi / 2.0)
                 rand_vecs.append([x_pos, y_pos, rot])
-            elif env_name is "wipe-board":
+            elif env_name == "wipe-board":
                 path_list = []
                 for i in range(env_cls.num_markers):
                     if i == 0:  # start position
-                        path_list.append(np.random.uniform(-0.4 * 0.9 + 0.01, 0.4 * 0.9 - 0.01))
-                        path_list.append(np.random.uniform(-0.4 * 0.9 + 0.01, 0.4 * 0.9 - 0.01))
+                        path_list.append(np.random.uniform(-0.4 * 0.7 + 0.01, 0.4 * 0.7 - 0.01))
+                        path_list.append(np.random.uniform(-0.4 * 0.7 + 0.01, 0.4 * 0.7 - 0.01))
                         path_list.append(np.random.uniform(-np.pi, np.pi))
                     else:   # rest of the path
                         if np.random.uniform(0, 1) > 0.7:
@@ -132,8 +132,8 @@ def _make_tasks(classes, args_kwargs, seed=None):
 
                         # We keep resampling until we get a valid new position that's on the table
                         while (
-                                abs(posnew0) >= 0.4 * 0.9 + 0.01
-                                or abs(posnew1) >= 0.4 * 0.9 + 0.01
+                                abs(posnew0) >= 0.4 * 0.7 + 0.01
+                                or abs(posnew1) >= 0.4 * 0.7 + 0.01
                         ):
                             direction += np.random.normal(0, 0.5)
                             posnew0 = path_list[i * 3 - 3] + 0.005 * np.sin(direction)
@@ -143,19 +143,11 @@ def _make_tasks(classes, args_kwargs, seed=None):
                         path_list.append(posnew0)
                         path_list.append(posnew1)
                         path_list.append(direction)
-                    for i, element in enumerate(path_list):
-                        if ((i+1) % 3) == 0:
-                            del path_list[i]
+
+                # Delete direction elements (only necessary for position computation)
+                del path_list[2::3]
+                # Append the whole path to the rand_vecs list
                 rand_vecs.append(path_list)
-
-
-                # TODO:
-                # - Continue here: learn how to modify the wipe line! (robosuite/environments/manipulation/wipe.py)
-                #       CHECK
-                # - Modify robosuite/wrappers/gym_wrapper.py GymWrapper self.env.spec (line 53) to comply with Garage!
-                # - Step through the robosuite_maml example
-                #       TOMORROW WHILE NICOLE @ MASSAGE
-                pass
 
         unique_task_rand_vecs = np.unique(np.array(rand_vecs), axis=0)
         assert unique_task_rand_vecs.shape[0] == _N_GOALS

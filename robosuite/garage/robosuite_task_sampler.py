@@ -127,19 +127,14 @@ class RobosuiteTaskSampler(TaskSampler):
     """TaskSampler that distributes a Meta-World benchmark across workers.
 
     Args:
-        benchmark (metaworld.Benchmark): Benchmark to sample tasks from.
+        benchmark (MLRobosuite.Benchmark): Benchmark to sample tasks from.
         kind (str): Must be either 'test' or 'train'. Determines whether to
             sample training or test tasks from the Benchmark.
         wrapper (Callable[garage.Env, garage.Env] or None): Wrapper to apply to
             env instances.
-        add_env_onehot (bool): If true, a one-hot representing the current
-            environment name will be added to the environments. Should only be
-            used with multi-task benchmarks.
 
     Raises:
-        ValueError: If kind is not 'train' or 'test'. Also raisd if
-            `add_env_onehot` is used on a metaworld meta learning (not
-            multi-task) benchmark.
+        ValueError: If kind is not 'train' or 'test'.
 
     """
 

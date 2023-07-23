@@ -49,9 +49,6 @@ class GymWrapper(Wrapper, Env):
                 keys += ["robot{}_proprio-state".format(idx)]
         self.keys = keys
 
-        # Gym specific attributes
-        self.env.spec = None
-
         # According to https://www.gymlibrary.dev/api/core/, self.metadata must be set to follow Gym's Environment
         # design rules. Due to the structure of Robosuite, the following render modes may be chosen.
         self.metadata = {'render_modes': [None, 'human']}
@@ -71,6 +68,10 @@ class GymWrapper(Wrapper, Env):
         self.observation_space = spaces.Box(low=low, high=high)
         low, high = self.env.action_spec
         self.action_space = spaces.Box(low=low, high=high)
+
+        # Gym specific attributes used in Garage
+        self.max_path_length = self.env.horizon
+        self.env.spec = None  # TODO: - adapt the env.spec to comply to the Garage structure
 
     def _flatten_obs(self, obs_dict, verbose=False):
         """

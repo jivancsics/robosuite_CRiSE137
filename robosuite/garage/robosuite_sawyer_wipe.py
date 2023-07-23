@@ -6,6 +6,40 @@ import numpy as np
 
 # from garage.envs import GymEnv
 
+# Default Wipe environment configuration copied from robosuite/environments/manipulation/wipe.py
+DEFAULT_WIPE_CONFIG = {
+    # settings for reward
+    "arm_limit_collision_penalty": -10.0,  # penalty for reaching joint limit or arm collision (except the wiping tool) with the table
+    "wipe_contact_reward": 0.01,  # reward for contacting something with the wiping tool
+    "unit_wiped_reward": 50.0,  # reward per peg wiped
+    "ee_accel_penalty": 0,  # penalty for large end-effector accelerations
+    "excess_force_penalty_mul": 0.05,  # penalty for each step that the force is over the safety threshold
+    "distance_multiplier": 5.0,  # multiplier for the dense reward inversely proportional to the mean location of the pegs to wipe
+    "distance_th_multiplier": 5.0,  # multiplier in the tanh function for the aforementioned reward
+    # settings for table top
+    "table_full_size": [0.5, 0.8, 0.05],  # Size of tabletop
+    "table_offset": [0.15, 0, 0.9],  # Offset of table (z dimension defines max height of table)
+    "table_friction": [0.03, 0.005, 0.0001],  # Friction parameters for the table
+    "table_friction_std": 0,  # Standard deviation to sample different friction parameters for the table each episode
+    "table_height": 0.0,  # Additional height of the table over the default location
+    "table_height_std": 0.0,  # Standard deviation to sample different heigths of the table each episode
+    "line_width": 0.04,  # Width of the line to wipe (diameter of the pegs)
+    "two_clusters": False,  # if the dirt to wipe is one continuous line or two; CURRENTLY NOT IMPLEMENTED IN METALEARNING SETTING
+    "coverage_factor": 0.6,  # how much of the table surface we cover
+    "num_markers": 30,  # How many particles of dirt to generate in the environment
+    # settings for thresholds
+    "contact_threshold": 1.0,  # Minimum eef force to qualify as contact [N]
+    "pressure_threshold": 0.5,  # force threshold (N) to overcome to get increased contact wiping reward
+    "pressure_threshold_max": 60.0,  # maximum force allowed (N)
+    # misc settings
+    "print_results": False,  # Whether to print results or not
+    "get_info": False,  # Whether to grab info after each env step if not
+    "use_robot_obs": True,  # if we use robot observations (proprioception) as input to the policy
+    "use_contact_obs": True,  # if we use a binary observation for whether robot is in contact or not
+    "early_terminations": True,  # Whether we allow for early terminations or not
+    "use_condensed_obj_obs": True,  # Whether to use condensed object observation representation (only applicable if obj obs is active)
+}
+
 
 class SawyerWipeRobosuiteEnv:
     """
@@ -113,7 +147,8 @@ class SawyerWipeRobosuiteEnv:
             segmentation setting(s) to use.
 
         task_config (None or dict): Specifies the parameters relevant to this task. For a full list of expected
-            parameters, see the default config dict at the top of the file robosuite/environments/manipulation/wipe.py.
+            parameters, see the default config dict at the top of the file robosuite/environments/manipulation/wipe.py
+            (copy also at the top of this file).
             If None is specified, the default configuration will be used.
     """
 
@@ -147,6 +182,8 @@ class SawyerWipeRobosuiteEnv:
         self.metalearning = True
         self.start_pos = None
         self.path_pos = None
+        self.task_config = DEFAULT_WIPE_CONFIG
+        self.num_markers = self.task_config["num_markers"]
 
         # Necessary for setting the subtasks correctly
         self._set_task_called = False
@@ -164,15 +201,16 @@ class SawyerWipeRobosuiteEnv:
         # initialize self.placement_initializer correctly here!!!
         # self.placement_initializer(self._last_rand_vec)
         self.start_pos = self._last_rand_vec[:2]
-        self.path_pos = np.zeros((len(self._last_rand_vec[2:]) / 2, 2))
-        row = 0
-        col = 0
-        for i, element in enumerate(self._last_rand_vec[2:]):
-            self.path_pos[row, col] = element
-            col += 1
-            if (i + 1) % 2:
-                col = 0
-                row += 1
+        self.path_pos = self._last_rand_vec[2:]
+        # self.path_pos = np.zeros((int((len(self._last_rand_vec) - 2) / 2), 2))
+        # row = 0
+        # col = 0
+        # for i, element in enumerate(self._last_rand_vec[2:]):
+        #     self.path_pos[row, col] = element
+        #     col += 1
+        #     if ((i + 1) % 2) == 0:
+        #         col = 0
+        #         row += 1
 
 
     def __call__(self):
