@@ -7,6 +7,7 @@ interface.
 import numpy as np
 from gym import spaces
 from gym.core import Env
+from garage._environment import EnvSpec
 
 from robosuite.wrappers import Wrapper
 
@@ -52,10 +53,10 @@ class GymWrapper(Wrapper, Env):
         # According to https://www.gymlibrary.dev/api/core/, self.metadata must be set to follow Gym's Environment
         # design rules. Due to the structure of Robosuite, the following render modes may be chosen.
         self.metadata = {'render_modes': [None, 'human']}
-        robosuite_render_modes = ["has_renderer=False", "renderer=default or mujoco"]
-        translator_dict = dict(zip(self.metadata['render_modes'], robosuite_render_modes))
-        print('Make sure that render modes got explicitly set via the following aliases ',
-              translator_dict, 'in suite.make()!')
+        # robosuite_render_modes = ["has_renderer=False", "renderer=default or mujoco"]
+        # translator_dict = dict(zip(self.metadata['render_modes'], robosuite_render_modes))
+        # print('Make sure that render modes got explicitly set via the following aliases ',
+        #       translator_dict, 'in suite.make()!')
 
 
         # set up observation and action spaces
@@ -71,7 +72,16 @@ class GymWrapper(Wrapper, Env):
 
         # Gym specific attributes used in Garage
         self.max_path_length = self.env.horizon
-        self.env.spec = None  # TODO: - adapt the env.spec to comply to the Garage structure
+        # adapt the env.spec to comply to the Garage structure by using class EnvSpec from garage/_environment.py
+        self.spec = EnvSpec(observation_space=self.observation_space,
+                            action_space=self.action_space,
+                            max_episode_length=self.max_path_length)
+
+        # specific identifiers that could be necessary to comply with garage/envs/task_name_wrapper.py
+        # self._task_name = task_name
+        # self._task_id = task_id
+
+
 
     def _flatten_obs(self, obs_dict, verbose=False):
         """

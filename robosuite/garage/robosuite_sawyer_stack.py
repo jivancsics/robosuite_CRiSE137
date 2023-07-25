@@ -127,34 +127,34 @@ class SawyerStackRobosuiteEnv:
     """
 
     def __init__(self):
-        self.env_configuration = "default",
-        self.controller_configs = None,
-        self.gripper_types = "default",
-        self.initialization_noise = "default",
-        self.table_full_size = (0.8, 0.8, 0.05),
-        self.table_friction = (1.0, 5e-3, 1e-4),
-        self.use_camera_obs = False,
-        self.use_object_obs = True,
-        self.reward_scale = 1.0,
-        self.reward_shaping = True,
-        self.placement_initializer = None,
-        self.has_renderer = False,
-        self.has_offscreen_renderer = False,
-        self.render_camera = "frontview",
-        self.render_collision_mesh = False,
-        self.render_visual_mesh = True,
-        self.render_gpu_device_id = -1,
-        self.control_freq = 20,
-        self.horizon = 500,
-        self.ignore_done = False,
-        self.hard_reset = True,
-        self.camera_names = "agentview",
-        self.camera_heights = 256,
-        self. camera_widths = 256,
-        self.camera_depths = False,
-        self.camera_segmentations = None,
-        self.renderer = "mujoco",
-        self.renderer_config = None,
+        self.env_configuration = "default"
+        self.controller_configs = None
+        self.gripper_types = "default"
+        self.initialization_noise = "default"
+        self.table_full_size = (0.8, 0.8, 0.05)
+        self.table_friction = (1.0, 5e-3, 1e-4)
+        self.use_camera_obs = False
+        self.use_object_obs = True
+        self.reward_scale = 1.0
+        self.reward_shaping = True
+        self.placement_initializer = None
+        self.has_renderer = False
+        self.has_offscreen_renderer = False
+        self.render_camera = "frontview"
+        self.render_collision_mesh = False
+        self.render_visual_mesh = True
+        self.render_gpu_device_id = -1
+        self.control_freq = 20
+        self.horizon = 500
+        self.ignore_done = False
+        self.hard_reset = True
+        self.camera_names = "agentview"
+        self.camera_heights = 256
+        self.camera_widths = 256
+        self.camera_depths = False
+        self.camera_segmentations = None
+        self.renderer = "mujoco"
+        self.renderer_config = None
 
         # Necessary for setting the subtasks correctly
         self._set_task_called = False
@@ -253,6 +253,7 @@ class SawyerStackRobosuiteEnv:
         return GymWrapper(
             suite.make(
                 "Stack",
+                robots="Sawyer",
                 env_configuration=self.env_configuration,
                 controller_configs=self.controller_configs,
                 gripper_types=self.gripper_types,

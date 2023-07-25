@@ -245,7 +245,7 @@ class SawyerWipeRobosuiteEnv:
                 renderer=self.renderer,
                 renderer_config=self.renderer_config,
                 metalearning=self.metalearning,
-                start_pose=self.start_pos,
-                path_pose=self.path_pos,
+                start_pos=self.start_pos,
+                path_pos=self.path_pos,
             )
         )

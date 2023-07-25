@@ -122,7 +122,7 @@ class MujocoEnv(metaclass=EnvMeta):
         self.cur_time = None
         self.model_timestep = None
         self.control_timestep = None
-        self.deterministic_reset = False  # Whether to add randomized resetting of objects / robot joints
+        self.deterministic_reset = True  # Whether to add randomized resetting of objects / robot joints
 
         self.renderer = renderer
         self.renderer_config = renderer_config
