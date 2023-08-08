@@ -432,7 +432,7 @@ class NutAssembly(SingleArmEnv):
             self.nuts.append(nut)
             # Add this nut to the placement initializer
             if isinstance(self.placement_initializer, SequentialCompositeSampler):
-                # assumes we have two samplers so we add nuts to them
+                # assumes we have two samplers, therefore we add nuts to them
                 self.placement_initializer.add_objects_to_sampler(sampler_name=f"{nut_name}Sampler", mujoco_objects=nut)
             else:
                 # This is assumed to be a flat sampler, so we just add all nuts to this sampler
@@ -676,6 +676,7 @@ class NutAssembly(SingleArmEnv):
                 target=self.nuts[closest_nut_id].important_sites["handle"],
                 target_type="site",
             )
+
 
 
 class NutAssemblySingle(NutAssembly):

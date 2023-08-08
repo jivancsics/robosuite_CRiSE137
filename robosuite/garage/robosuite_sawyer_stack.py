@@ -7,13 +7,14 @@ from robosuite.utils.placement_samplers import UniformRandomSampler, SequentialC
 import numpy as np
 
 
-# from garage.envs import GymEnv
-
-
 class SawyerStackRobosuiteEnv:
     """
     This class encapsulates the block stacking task defined in Robosuite. It shall serve the similar behaviour of
     MetaWorld environments after instantiation via metaworld.ML10().
+
+    Args:
+        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task meta RL learning or
+        in a general ML setting with multiple diverse tasks.
 
     Class variables (inherited from args in robosuite/environments/manipulation/stack.py):
 
@@ -126,7 +127,7 @@ class SawyerStackRobosuiteEnv:
             segmentation setting(s) to use.
     """
 
-    def __init__(self):
+    def __init__(self, single_task_ml=False):
         self.env_configuration = "default"
         self.controller_configs = None
         self.gripper_types = "default"
@@ -155,6 +156,7 @@ class SawyerStackRobosuiteEnv:
         self.camera_segmentations = None
         self.renderer = "mujoco"
         self.renderer_config = None
+        self.single_task_ml = single_task_ml
 
         # Necessary for setting the subtasks correctly
         self._set_task_called = False
@@ -170,12 +172,12 @@ class SawyerStackRobosuiteEnv:
         self._last_rand_vec = data["rand_vec"]
         del data["rand_vec"]
 
-        x_range_A = [self._last_rand_vec[0], self._last_rand_vec[0]]
-        y_range_A = [self._last_rand_vec[1], self._last_rand_vec[1]]
-        rotation_A = self._last_rand_vec[2]
-        x_range_B = [self._last_rand_vec[3], self._last_rand_vec[3]]
-        y_range_B = [self._last_rand_vec[4], self._last_rand_vec[4]]
-        rotation_B = self._last_rand_vec[5]
+        x_range_a = [self._last_rand_vec[0], self._last_rand_vec[0]]
+        y_range_a = [self._last_rand_vec[1], self._last_rand_vec[1]]
+        rotation_a = self._last_rand_vec[2]
+        x_range_b = [self._last_rand_vec[3], self._last_rand_vec[3]]
+        y_range_b = [self._last_rand_vec[4], self._last_rand_vec[4]]
+        rotation_b = self._last_rand_vec[5]
 
         # initialize the two boxes
         tex_attrib = {
@@ -201,14 +203,14 @@ class SawyerStackRobosuiteEnv:
             mat_attrib=mat_attrib,
         )
 
-        cubeA = BoxObject(
+        cubea = BoxObject(
             name="cubeA",
             size_min=[0.02, 0.02, 0.02],
             size_max=[0.02, 0.02, 0.02],
             rgba=[1, 0, 0, 1],
             material=redwood,
         )
-        cubeB = BoxObject(
+        cubeb = BoxObject(
             name="cubeB",
             size_min=[0.025, 0.025, 0.025],
             size_max=[0.025, 0.025, 0.025],
@@ -222,9 +224,9 @@ class SawyerStackRobosuiteEnv:
         self.placement_initializer.append_sampler(
             sampler=UniformRandomSampler(
                 name="CubeASampler",
-                x_range=x_range_A,
-                y_range=y_range_A,
-                rotation=rotation_A,
+                x_range=x_range_a,
+                y_range=y_range_a,
+                rotation=rotation_a,
                 ensure_object_boundary_in_range=False,
                 ensure_valid_placement=True,
                 reference_pos=np.array((0, 0, 0.8)),
@@ -235,9 +237,9 @@ class SawyerStackRobosuiteEnv:
         self.placement_initializer.append_sampler(
             sampler=UniformRandomSampler(
                 name="CubeBSampler",
-                x_range=x_range_B,
-                y_range=y_range_B,
-                rotation=rotation_B,
+                x_range=x_range_b,
+                y_range=y_range_b,
+                rotation=rotation_b,
                 ensure_object_boundary_in_range=False,
                 ensure_valid_placement=True,
                 reference_pos=np.array((0, 0, 0.8)),
@@ -245,9 +247,8 @@ class SawyerStackRobosuiteEnv:
             )
         )
 
-        self.placement_initializer.add_objects_to_sampler(sampler_name="CubeASampler", mujoco_objects=cubeA)
-        self.placement_initializer.add_objects_to_sampler(sampler_name="CubeBSampler", mujoco_objects=cubeB)
-
+        self.placement_initializer.add_objects_to_sampler(sampler_name="CubeASampler", mujoco_objects=cubea)
+        self.placement_initializer.add_objects_to_sampler(sampler_name="CubeBSampler", mujoco_objects=cubeb)
 
     def __call__(self):
         return GymWrapper(
@@ -282,5 +283,6 @@ class SawyerStackRobosuiteEnv:
                 camera_segmentations=self.camera_segmentations,
                 renderer=self.renderer,
                 renderer_config=self.renderer_config,
-            )
+            ),
+            single_task_ml=self.single_task_ml,
         )

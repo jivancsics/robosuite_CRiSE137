@@ -1,7 +1,9 @@
 """
-This file implements a wrapper for facilitating compatibility with OpenAI gym.
-This is useful when using these environments with code that assumes a gym-like 
-interface.
+This file implements a wrapper for facilitating compatibility with OpenAI gym (this is useful when using these
+environments with code that assumes a gym-like interface like Garage) and compatibility with the special Meta RL
+Learning structure in Garage. If a standard RL OpenAI gym wrapper for single task learning in Garage or comparable is
+needed, set the single_task_ml flag properly at instantiation time.
+
 """
 
 import numpy as np
@@ -14,11 +16,15 @@ from robosuite.wrappers import Wrapper
 
 class GymWrapper(Wrapper, Env):
     """
-    Initializes the Gym wrapper. Mimics many of the required functionalities of the Wrapper class
-    found in the gym.core module
+    Initializes the Gym wrapper for Meta RL with Robosuite environments in Garage. Mimics many of the required
+    functionalities of the Wrapper class found in the gym.core module. Handles the uniform representation of the
+    observation vector over all Meta RL tasks. In case of single task Meta RL, the wrapper is able to adapt the
+    observation vector through the single_task_ml flag.
 
     Args:
         env (MujocoEnv): The environment to wrap.
+        single_task_ml (bool): Indicates whether to use the wrapper in a single task meta RL learning or
+        in a general ML setting with multiple diverse tasks.
         keys (None or list of str): If provided, each observation will
             consist of concatenated keys from the wrapped environment's
             observation dictionary. Defaults to proprio-state and object-state.
@@ -27,7 +33,7 @@ class GymWrapper(Wrapper, Env):
         AssertionError: [Object observations must be enabled if no keys]
     """
 
-    def __init__(self, env, keys=None):
+    def __init__(self, env, single_task_ml=False, keys=None):
         # Run super method
         super().__init__(env=env)
         # Create name for gym
@@ -37,6 +43,9 @@ class GymWrapper(Wrapper, Env):
         # Get reward range
         self.reward_range = (0, self.env.reward_scale)
 
+        # Init single_task_ml before using it in first _flatten_obs(obs) call
+        self.single_task_ml = single_task_ml
+
         if keys is None:
             keys = []
             # Add object obs if requested
@@ -45,6 +54,9 @@ class GymWrapper(Wrapper, Env):
             # Add image obs if requested
             if self.env.use_camera_obs:
                 keys += [f"{cam_name}_image" for cam_name in self.env.camera_names]
+                if not self.single_task_ml:
+                    raise Exception("USE OF CAMERA OBSERVATIONS IN THE OBSERVATION VECTOR "
+                                    "-> META LEARNING ACROSS TASKS CURRENTLY NOT POSSIBLE!")
             # Iterate over all robots to add to state
             for idx in range(len(self.env.robots)):
                 keys += ["robot{}_proprio-state".format(idx)]
@@ -53,13 +65,8 @@ class GymWrapper(Wrapper, Env):
         # According to https://www.gymlibrary.dev/api/core/, self.metadata must be set to follow Gym's Environment
         # design rules. Due to the structure of Robosuite, the following render modes may be chosen.
         self.metadata = {'render_modes': [None, 'human']}
-        # robosuite_render_modes = ["has_renderer=False", "renderer=default or mujoco"]
-        # translator_dict = dict(zip(self.metadata['render_modes'], robosuite_render_modes))
-        # print('Make sure that render modes got explicitly set via the following aliases ',
-        #       translator_dict, 'in suite.make()!')
 
-
-        # set up observation and action spaces
+        # Set up observation and action spaces
         obs = self.env.reset()
         self.modality_dims = {key: obs[key].shape for key in self.keys}
         flat_ob = self._flatten_obs(obs)
@@ -77,12 +84,6 @@ class GymWrapper(Wrapper, Env):
                             action_space=self.action_space,
                             max_episode_length=self.max_path_length)
 
-        # specific identifiers that could be necessary to comply with garage/envs/task_name_wrapper.py
-        # self._task_name = task_name
-        # self._task_id = task_id
-
-
-
     def _flatten_obs(self, obs_dict, verbose=False):
         """
         Filters keys of interest out and concatenate the information.
@@ -94,13 +95,88 @@ class GymWrapper(Wrapper, Env):
         Returns:
             np.array: observations flattened into a 1d array
         """
+        env_name = str(self.env)
         ob_lst = []
-        for key in self.keys:
-            if key in obs_dict:
-                if verbose:
-                    print("adding key: {}".format(key))
-                ob_lst.append(np.array(obs_dict[key]).flatten())
-        return np.concatenate(ob_lst)
+        ob_lengths = []
+        ob_lut = {}
+        observation_dim = 33
+
+        if self.single_task_ml:
+            ob_lst = []
+            for key in self.keys:
+                if key in obs_dict:
+                    if verbose:
+                        print("adding key: {}".format(key))
+                    ob_lst.append(np.array(obs_dict[key]).flatten())
+            return np.concatenate(ob_lst)
+
+        else:
+            for i, key in enumerate(self.keys):
+                if key in obs_dict:
+                    if verbose:
+                        print("adding key: {}".format(key))
+                    ob_lut[key] = i
+                    ob_lst.append(np.array(obs_dict[key]).flatten())
+                    ob_lengths.append(obs_dict[key].size)
+                    if i == 1:
+                        if ob_lengths[i] == 32:
+                            ob_lst = ob_lst[i:] + ob_lst[:i]
+
+            if 'robosuite.environments.manipulation.door.Door' in env_name:
+                ob_lst[1] = np.insert(ob_lst[1], [3, 3, 3, 3], [0, 0, 0, 0])    # door quat not known
+                ob_lst[1] = np.insert(ob_lst[1], [7, 7, 7], ob_lst[1][10:13])  # door to end effector pos
+                ob_lst[1] = np.insert(ob_lst[1], [10, 10, 10, 10], [0, 0, 0, 0])  # door to end effector quat not known
+                ob_lst[1] = np.insert(ob_lst[1], [17, 17, 17, 17], [0, 0, 0, 0])  # handle quat not known
+                ob_lst[1] = np.insert(ob_lst[1], [21, 21, 21], ob_lst[1][24:27])  # handle to end effector pos
+                ob_lst[1] = np.insert(ob_lst[1], [24, 24, 24, 24], [0, 0, 0, 0])  # handle 2 end effector quat not known
+                ob_lst[1] = np.delete(ob_lst[1], [28, 29, 30, 31, 32, 33])  # delete moved information
+                ob_lst[1] = np.insert(ob_lst[1], [28, 28, 28], [0, 0, 0])  # Distance Cube2Cube info unknown
+
+            elif 'robosuite.environments.manipulation.lift.Lift' in env_name:
+                ob_lst[1] = np.insert(ob_lst[1], [10, 10, 10, 10], [0, 0, 0, 0])  # gripper 2 cube quat not known
+                ob_lst[1] = np.insert(ob_lst[1], [14] * (observation_dim - 14),
+                                      [0] * (observation_dim - 14))  # fill with zeros
+
+            elif 'robosuite.environments.manipulation.nut_assembly.NutAssemblyRound' in env_name:
+                ob_lst[1] = np.insert(ob_lst[1], [14] * (observation_dim - 14),
+                                      [0] * (observation_dim - 14))  # fill with zeros
+
+            elif 'robosuite.environments.manipulation.nut_assembly.NutAssemblySquare' in env_name:
+                ob_lst[1] = np.insert(ob_lst[1], [14] * (observation_dim - 14),
+                                      [0] * (observation_dim - 14))  # fill with zeros
+
+            elif 'robosuite.environments.manipulation.nut_assembly.NutAssembly' in env_name:
+                ob_lst[1] = np.insert(ob_lst[1], [28] * (observation_dim - 28),
+                                      [0] * (observation_dim - 28))  # fill with zeros
+
+            elif 'robosuite.environments.manipulation.pick_place.PickPlaceMilk' in env_name:
+                ob_lst[1] = np.insert(ob_lst[1], [14] * (observation_dim - 14),
+                                      [0] * (observation_dim - 14))  # fill with zeros
+
+            elif 'robosuite.environments.manipulation.pick_place.PickPlaceBread' in env_name:
+                ob_lst[1] = np.insert(ob_lst[1], [14] * (observation_dim - 14),
+                                      [0] * (observation_dim - 14))  # fill with zeros
+
+            elif 'robosuite.environments.manipulation.pick_place.PickPlaceCereal' in env_name:
+                ob_lst[1] = np.insert(ob_lst[1], [14] * (observation_dim - 14),
+                                      [0] * (observation_dim - 14))  # fill with zeros
+
+            elif 'robosuite.environments.manipulation.pick_place.PickPlaceCan' in env_name:
+                ob_lst[1] = np.insert(ob_lst[1], [14] * (observation_dim - 14),
+                                      [0] * (observation_dim - 14))  # fill with zeros
+
+            elif 'robosuite.environments.manipulation.stack.Stack' in env_name:
+                ob_lst[1] = np.insert(ob_lst[1], [7, 7, 7], ob_lst[1][14:17])  # cubeA 2 gripper pos
+                ob_lst[1] = np.insert(ob_lst[1], [10, 10, 10, 10], [0, 0, 0, 0])  # cubeA 2 gripper quat not known
+                ob_lst[1] = np.insert(ob_lst[1], [21, 21, 21], ob_lst[1][24:27])  # handle to end effector pos
+                ob_lst[1] = np.insert(ob_lst[1], [24, 24, 24, 24], [0, 0, 0, 0])  # handle 2 end effector quat not known
+                ob_lst[1] = np.delete(ob_lst[1], [28, 29, 30, 31, 32, 33])  # delete moved information
+                ob_lst[1] = np.insert(ob_lst[1], [31, 31], [0, 0])  # door hinge and door handle qpos is zero
+
+            else:
+                raise Exception("No known Robosuite Meta learning environment found!")
+
+            return np.concatenate(ob_lst)
 
     def reset(self):
         """

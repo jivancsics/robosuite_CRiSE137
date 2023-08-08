@@ -5,14 +5,15 @@ from robosuite.utils.placement_samplers import UniformRandomSampler, SequentialC
 import numpy as np
 
 
-# from garage.envs import GymEnv
-
-
 class SawyerNutassemblyroundRobosuiteEnv:
     """
     This class encapsulates the specific nut assembly task of Robosuite where a round nut shall be assembled onto
     the round peg. The behaviour of MetaWorld environments after instantiation via metaworld.ML10() shall be copied
     by this class.
+
+    Args:
+        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task meta RL learning or
+        in a general ML setting with multiple diverse tasks.
 
     Class variables (inherited from args in robosuite/environments/manipulation/nut_assembly.py):
 
@@ -141,7 +142,7 @@ class SawyerNutassemblyroundRobosuiteEnv:
             segmentation setting(s) to use.
     """
 
-    def __init__(self):
+    def __init__(self, single_task_ml=False):
         self.env_configuration = "default"
         self.controller_configs = None
         self.gripper_types = "default"
@@ -153,8 +154,6 @@ class SawyerNutassemblyroundRobosuiteEnv:
         self.reward_scale = 1.0
         self.reward_shaping = True
         self.placement_initializer = None
-        self.single_object_mode = 2
-        self.nut_type = "round"
         self.has_renderer = False
         self.has_offscreen_renderer = False
         self.render_camera = "frontview"
@@ -172,6 +171,7 @@ class SawyerNutassemblyroundRobosuiteEnv:
         self.camera_segmentations = None
         self.renderer = "mujoco"
         self.renderer_config = None
+        self.single_task_ml = single_task_ml
 
         # Necessary for setting the subtasks correctly
         self._set_task_called = False
@@ -229,7 +229,7 @@ class SawyerNutassemblyroundRobosuiteEnv:
     def __call__(self):
         return GymWrapper(
             suite.make(
-                "NutAssembly",
+                "NutAssemblyRound",
                 robots="Sawyer",
                 env_configuration=self.env_configuration,
                 controller_configs=self.controller_configs,
@@ -242,8 +242,6 @@ class SawyerNutassemblyroundRobosuiteEnv:
                 reward_scale=self.reward_scale,
                 reward_shaping=self.reward_shaping,
                 placement_initializer=self.placement_initializer,
-                single_object_mode=self.single_object_mode,
-                nut_type=self.nut_type,
                 has_renderer=self.has_renderer,
                 has_offscreen_renderer=self.has_offscreen_renderer,
                 render_camera=self.render_camera,
@@ -261,5 +259,6 @@ class SawyerNutassemblyroundRobosuiteEnv:
                 camera_segmentations=self.camera_segmentations,
                 renderer=self.renderer,
                 renderer_config=self.renderer_config,
-            )
+            ),
+            single_task_ml=self.single_task_ml,
         )

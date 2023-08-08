@@ -3,13 +3,16 @@ from robosuite.wrappers import GymWrapper
 import pickle
 from robosuite.utils.placement_samplers import SequentialCompositeSampler, UniformRandomSampler
 import numpy as np
-# from garage.envs import GymEnv
 
 
 class SawyerNutassemblyRobosuiteEnv:
     """
     This class encapsulates the nut assembly task of Robosuite and shall serve the similar behaviour of MetaWorld
     environments after instantiation via metaworld.ML10().
+
+    Args:
+        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task meta RL learning or
+        in a general ML setting with multiple diverse tasks.
 
     Class variables (inherited from args in robosuite/environments/manipulation/nut_assembly.py):
 
@@ -138,7 +141,7 @@ class SawyerNutassemblyRobosuiteEnv:
             segmentation setting(s) to use.
     """
 
-    def __init__(self):
+    def __init__(self, single_task_ml=False):
         self.env_configuration = "default"
         self.controller_configs = None
         self.gripper_types = "default"
@@ -169,6 +172,7 @@ class SawyerNutassemblyRobosuiteEnv:
         self.camera_segmentations = None
         self.renderer = "mujoco"
         self.renderer_config = None
+        self.single_task_ml = single_task_ml
 
         # Necessary for setting the subtasks correctly
         self._set_task_called = False
@@ -222,7 +226,6 @@ class SawyerNutassemblyRobosuiteEnv:
             )
         )
 
-
     def __call__(self):
         return GymWrapper(
             suite.make(
@@ -258,5 +261,6 @@ class SawyerNutassemblyRobosuiteEnv:
                 camera_segmentations=self.camera_segmentations,
                 renderer=self.renderer,
                 renderer_config=self.renderer_config,
-            )
+            ),
+            single_task_ml=self.single_task_ml,
         )

@@ -3,13 +3,14 @@ from robosuite.wrappers import GymWrapper
 import pickle
 
 
-# from garage.envs import GymEnv
-
-
 class SawyerPickplacecanRobosuiteEnv:
     """
     This class encapsulates the single pick and place Robosuite task for the object can. It shall serve the similar
     behaviour of MetaWorld environments after instantiation via metaworld.ML10().
+
+    Args:
+        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task meta RL learning or
+        in a general ML setting with multiple diverse tasks.
 
     Class variables (inherited from args in robosuite/environments/manipulation/pick_place.py):
         robots (str or list of str): Specification for specific robot arm(s) to be instantiated within this env
@@ -141,7 +142,7 @@ class SawyerPickplacecanRobosuiteEnv:
             segmentation setting(s) to use.
     """
 
-    def __init__(self):
+    def __init__(self, single_task_ml=False):
         self.env_configuration = "default"
         self.controller_configs = None
         self.gripper_types = "default"
@@ -154,8 +155,6 @@ class SawyerPickplacecanRobosuiteEnv:
         self.use_object_obs = True
         self.reward_scale = 1.0
         self.reward_shaping = True
-        self.single_object_mode = 2
-        self.object_type = "can"
         self.has_renderer = False
         self.has_offscreen_renderer = False
         self.render_camera = "frontview"
@@ -173,6 +172,7 @@ class SawyerPickplacecanRobosuiteEnv:
         self.camera_segmentations = None
         self.renderer = "mujoco"
         self.renderer_config = None
+        self.single_task_ml = single_task_ml
 
         # Necessary for setting the subtasks correctly
         self._set_task_called = False
@@ -193,7 +193,7 @@ class SawyerPickplacecanRobosuiteEnv:
     def __call__(self):
         return GymWrapper(
             suite.make(
-                "PickPlace",
+                "PickPlaceCan",
                 robots="Sawyer",
                 env_configuration=self.env_configuration,
                 controller_configs=self.controller_configs,
@@ -207,8 +207,6 @@ class SawyerPickplacecanRobosuiteEnv:
                 use_object_obs=self.use_object_obs,
                 reward_scale=self.reward_scale,
                 reward_shaping=self.reward_shaping,
-                single_object_mode=self.single_object_mode,
-                object_type=self.object_type,
                 has_renderer=self.has_renderer,
                 has_offscreen_renderer=self.has_offscreen_renderer,
                 render_camera=self.render_camera,
@@ -226,5 +224,6 @@ class SawyerPickplacecanRobosuiteEnv:
                 camera_segmentations=self.camera_segmentations,
                 renderer=self.renderer,
                 renderer_config=self.renderer_config,
-            )
+            ),
+            single_task_ml=self.single_task_ml,
         )

@@ -1,5 +1,6 @@
 """A callable that "updates" an environment."""
 import warnings
+from copy import deepcopy
 
 
 class EnvUpdate:
@@ -76,6 +77,8 @@ class SetTaskUpdate(EnvUpdate):
     # pylint: disable=too-few-public-methods
 
     def __init__(self, env_type, task, wrapper_constructor):
+        # Type check for class not available due to the needed special structure inherited
+        # through the interaction with Robosuite via suite.make()
         # if not isinstance(env_type, type):
         #     raise ValueError('env_type should be a type, not '
         #                      f'{type(env_type)!r}')
@@ -109,16 +112,32 @@ class SetTaskUpdate(EnvUpdate):
         """
         # We need exact type equality, not just a subtype
         # pylint: disable=unidiomatic-typecheck
+        # checkenv = deepcopy(self._env_type)
+        # checkenv.set_task(self._task)
+        # comparison_env = checkenv()
+        # if self._wrapper_cons is not None:
+        #     env = self._wrapper_cons(comparison_env, self._task)
+
         if old_env is None:
             return self._make_env()
-        elif type(getattr(old_env, 'unwrapped', old_env)) != self._env_type:
+        #   elif not isinstance(type(getattr(old_env, 'unwrapped', old_env)),
+        #                 type(getattr(comparison_env, 'unwrapped'))):
+        #  elif type(getattr(old_env, 'unwrapped', old_env)) != type(getattr(comparison_env, 'unwrapped')):
+        #     warnings.warn('SetTaskEnvUpdate is closing an environment. This '
+        #                   'may indicate a very slow TaskSampler setup.')
+        #     old_env.close()
+        #     return self._make_env()
+        else:
+            # Slow sampling setup due to the fact that the task is not settable without deeply changing
+            # the underlying class structure of the environments (see robosuite/environments/manipulation)
+            #
+            # old_env.set_task(self._task)
+            # return old_env
             warnings.warn('SetTaskEnvUpdate is closing an environment. This '
                           'may indicate a very slow TaskSampler setup.')
             old_env.close()
             return self._make_env()
-        else:
-            old_env.set_task(self._task)
-            return old_env
+
 
 
 class ExistingEnvUpdate(EnvUpdate):

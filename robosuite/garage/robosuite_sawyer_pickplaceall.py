@@ -3,9 +3,6 @@ from robosuite.wrappers import GymWrapper
 import pickle
 
 
-# from garage.envs import GymEnv
-
-
 class SawyerPickplaceallRobosuiteEnv:
     """
     This class encapsulates the single pick and place Robosuite task for the different objects can, bread, milk and
@@ -142,7 +139,7 @@ class SawyerPickplaceallRobosuiteEnv:
         AssertionError: [Invalid number of robots specified]
     """
 
-    def __init__(self):
+    def __init__(self, single_task_ml=False):
         self.env_configuration = "default"
         self.controller_configs = None
         self.gripper_types = "default"
@@ -174,6 +171,7 @@ class SawyerPickplaceallRobosuiteEnv:
         self.camera_segmentations = None
         self.renderer = "mujoco"
         self.renderer_config = None
+        self.single_task_ml = single_task_ml
 
         # Necessary for setting the subtasks correctly
         self._set_task_called = False
@@ -227,5 +225,6 @@ class SawyerPickplaceallRobosuiteEnv:
                 camera_segmentations=self.camera_segmentations,
                 renderer=self.renderer,
                 renderer_config=self.renderer_config,
-            )
+            ),
+            single_task_ml=self.single_task_ml,
         )

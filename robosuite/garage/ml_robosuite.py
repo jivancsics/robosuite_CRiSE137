@@ -49,17 +49,17 @@ class Benchmark(abc.ABC):
         return self._test_tasks
 
 
-_N_GOALS = 50
-
-
 def _encode_task(env_name, data):
     return Task(env_name=env_name, data=pickle.dumps(data))
 
 
-def _make_tasks(classes, args_kwargs, seed=None):
+def _make_tasks(classes, args_kwargs, seed=None, single_task_ml=False):
     if seed is not None:
         st0 = np.random.get_state()
         np.random.seed(seed)
+    _N_GOALS = 50
+    if single_task_ml:
+        _N_GOALS = 100
     tasks = []
     for env_name, args in args_kwargs.items():
         assert len(args["args"]) == 0
@@ -94,13 +94,26 @@ def _make_tasks(classes, args_kwargs, seed=None):
                 rot = np.random.uniform(low=0, high=np.pi / 2.0)
                 rand_vecs.append([x_pos, y_pos, rot])
             elif env_name == "stack-blocks":
-                x_pos_A = np.random.uniform(low=-0.2, high=0.2)
-                y_pos_A = np.random.uniform(low=-0.2, high=0.2)
-                rot_A = np.random.uniform(low=0, high=np.pi / 2.0)
-                x_pos_B = np.random.uniform(low=-0.2, high=0.2)
-                y_pos_B = np.random.uniform(low=-0.2, high=0.2)
-                rot_B = np.random.uniform(low=0, high=np.pi / 2.0)
-                rand_vecs.append([x_pos_A, y_pos_A, rot_A, x_pos_B, y_pos_B, rot_B])
+                x_pos_a = np.random.uniform(low=-0.3, high=0.3)
+                y_pos_a = np.random.uniform(low=-0.3, high=0.3)
+                rot_a = np.random.uniform(low=0, high=np.pi / 2.0)
+                vec_cubea = np.array([y_pos_a, x_pos_a])
+                while True:
+                    x_pos_b = np.random.uniform(low=-0.3, high=0.3)
+                    y_pos_b = np.random.uniform(low=-0.3, high=0.3)
+                    vec_cubeb = np.array([y_pos_b, x_pos_b])
+                    dist_ab = np.linalg.norm(vec_cubea - vec_cubeb)
+
+                    """
+                    Cube dimensions cubeA = [0.02, 0.02, 0.02], cubeB = [0.025, 0.025, 0.025] =>
+                    radius from origin around cubeA ~ 0.015, cubeB ~ 0.018 => cubeA + cubeB ~ 0.033
+                    with a margin dist_AB > 0.04, else resampling of cubeB
+                    """
+
+                    if dist_ab > 0.04:
+                        break
+                rot_b = np.random.uniform(low=0, high=np.pi / 2.0)
+                rand_vecs.append([x_pos_a, y_pos_a, rot_a, x_pos_b, y_pos_b, rot_b])
             elif env_name in ("pick-place-mixed", "pick-place-bread", "pick-place-milk",
                               "pick-place-cereal", "pick-place-can"):
                 bin1_x_pos = np.random.uniform(low=-0.1, high=0.1)
@@ -162,6 +175,11 @@ def _make_tasks(classes, args_kwargs, seed=None):
     return tasks
 
 
+def _singleml_env_names():
+    tasks = list(_env_dict.ROBOSUITESINGLEML["train"])
+    return tasks
+
+
 class MLRobosuite(Benchmark):
     def __init__(self, seed=None):
         super().__init__()
@@ -177,4 +195,25 @@ class MLRobosuite(Benchmark):
         )
 
 
-__all__ = ["MLRobosuite"]
+class SingleMLRobosuite(Benchmark):
+    ENV_NAMES = _singleml_env_names()
+
+    def __init__(self, env_name, seed=None):
+        super().__init__()
+        if env_name not in _env_dict.ALL_ROBOSUITE_SINGLE_ML_TASK_ENVIRONMENTS:
+            raise ValueError(f"{env_name} is not a Robosuite ML environment")
+        cls = _env_dict.ALL_ROBOSUITE_SINGLE_ML_TASK_ENVIRONMENTS[env_name]
+        self._train_classes = OrderedDict([(env_name, cls)])
+        self._test_classes = self._train_classes
+        self._train_ = OrderedDict([(env_name, cls)])
+        args_kwargs = _env_dict.ML1_args_kwargs[env_name]
+
+        # Make sure that train tasks and test tasks are not the same
+        # Use the built in functionality of _make_tasks to fulfill this requirement
+        self._train_tasks = _make_tasks(
+            self._train_classes, {env_name: args_kwargs}, seed=seed, single_task_ml=True,)
+        self._test_tasks = self._train_tasks[50:100]
+        del self._train_tasks[50:100]
+
+
+__all__ = ["MLRobosuite", "SingleMLRobosuite"]

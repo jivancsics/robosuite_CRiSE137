@@ -5,13 +5,14 @@ from robosuite.utils.placement_samplers import UniformRandomSampler
 import numpy as np
 
 
-# from garage.envs import GymEnv
-
-
 class SawyerBlockliftingRobosuiteEnv:
     """
     This class encapsulates the lifting task of Robosuite and shall serve the similar behaviour of MetaWorld
     environments after instantiation via metaworld.ML10().
+
+    Args:
+        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task meta RL learning or
+        in a general ML setting with multiple diverse tasks.
 
     Class variables (inherited from args in robosuite/environments/manipulation/lift.py):
 
@@ -124,7 +125,7 @@ class SawyerBlockliftingRobosuiteEnv:
             segmentation setting(s) to use.
     """
 
-    def __init__(self):
+    def __init__(self, single_task_ml=False):
         self.use_camera_obs = False
         self.has_offscreen_renderer = False
         self.has_renderer = False
@@ -145,8 +146,6 @@ class SawyerBlockliftingRobosuiteEnv:
         self.render_visual_mesh = True
         self.render_gpu_device_id = -1
         self.ignore_done = False
-        # choose if environment should get reloaded completely at each env.reset() call =>
-        # new initial obj and target position every env.reset()?? Therefore False
         self.hard_reset = True
         self.camera_names = "agentview"
         self.camera_heights = 256
@@ -155,6 +154,7 @@ class SawyerBlockliftingRobosuiteEnv:
         self.camera_segmentations = None  # {None, instance, class, element}
         self.renderer = "mujoco"
         self.renderer_config = None
+        self.single_task_ml = single_task_ml
 
         # Necessary for setting the subtasks correctly
         self._set_task_called = False
@@ -218,5 +218,6 @@ class SawyerBlockliftingRobosuiteEnv:
                 camera_segmentations=self.camera_segmentations,
                 renderer=self.renderer,
                 renderer_config=self.renderer_config,
-            )
+            ),
+            single_task_ml=self.single_task_ml,
         )

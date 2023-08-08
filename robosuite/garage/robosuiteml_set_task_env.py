@@ -1,4 +1,4 @@
-"""Environment that wraps a MetaWorld benchmark in the set_task interface."""
+"""Environment that wraps a Robosuite ML benchmark in the set_task interface."""
 import random
 
 # Importing garage directly avoids circular dependencies with GymEnv,
@@ -7,8 +7,8 @@ from garage import envs
 from garage._environment import Environment
 
 
-class MetaWorldSetTaskEnv(Environment):
-    """Environment form of a MetaWorld benchmark.
+class RobosuiteMLSetTaskEnv(Environment):
+    """Environment form of a Robosuite ML benchmark.
 
     This class is generally less efficient than using a TaskSampler, if that
     can be used instead, since each instance of this class internally caches a
@@ -18,7 +18,7 @@ class MetaWorldSetTaskEnv(Environment):
     at construction time.
 
     Args:
-        benchmark (metaworld.Benchmark or None): The benchmark to wrap.
+        benchmark robosuiteML.Benchmark or None): The benchmark to wrap.
         kind (str or None): Whether to use test or train tasks.
         wrapper (Callable[garage.Env, garage.Env] or None): Wrapper to apply to
             env instances.
@@ -118,8 +118,25 @@ class MetaWorldSetTaskEnv(Environment):
         if not self._inner_tasks:
             self._fill_tasks()
         self._current_task = task['inner']
-        self._construct_env_if_needed()
+        # self._construct_env_if_needed()
+        # Force the MetaWorldSetTaskEnv to once again set the appropriate task, even if it is already set through
+        # ------------------
+        # Old code:
+        # self._construct_env_if_needed()
+        # if self._current_env
         #  self._current_env.set_task(task['inner'])
+        # env = self._envs.get(env_name, None)
+        #       if getattr(env, 'unwrapped', env) != getattr(self._envs[env_name], 'unwrapped', self._envs[env_name]):
+        # ------------------
+        env_name = self._current_task.env_name
+        env_cls = self._classes[env_name]
+        env_cls.set_task(self._current_task)
+        env = env_cls()
+        env = envs.GymEnv(env, max_episode_length=env.max_path_length)
+        env = envs.TaskNameWrapper(env, task_name=env_name)
+        if self._wrapper is not None:
+            env = self._wrapper(env, self._current_task)
+        self._envs[env_name] = env
         self._current_env.reset()
 
     def _fill_tasks(self):
@@ -172,12 +189,6 @@ class MetaWorldSetTaskEnv(Environment):
             env = env_cls()
             env = envs.GymEnv(env, max_episode_length=env.max_path_length)
             env = envs.TaskNameWrapper(env, task_name=env_name)
-            if self._add_env_onehot:
-                task_index = self._task_indices[env_name]
-                env = envs.TaskOnehotWrapper(env,
-                                             task_index=task_index,
-                                             n_total_tasks=len(
-                                                 self._task_indices))
             if self._wrapper is not None:
                 env = self._wrapper(env, self._current_task)
             self._envs[env_name] = env

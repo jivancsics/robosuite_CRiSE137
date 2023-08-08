@@ -1,10 +1,7 @@
 import robosuite as suite
 from robosuite.wrappers import GymWrapper
 import pickle
-import numpy as np
 
-
-# from garage.envs import GymEnv
 
 # Default Wipe environment configuration copied from robosuite/environments/manipulation/wipe.py
 DEFAULT_WIPE_CONFIG = {
@@ -24,7 +21,7 @@ DEFAULT_WIPE_CONFIG = {
     "table_height": 0.0,  # Additional height of the table over the default location
     "table_height_std": 0.0,  # Standard deviation to sample different heigths of the table each episode
     "line_width": 0.04,  # Width of the line to wipe (diameter of the pegs)
-    "two_clusters": False,  # if the dirt to wipe is one continuous line or two; CURRENTLY NOT IMPLEMENTED IN METALEARNING SETTING
+    "two_clusters": False,  # if the dirt to wipe is one continuous line or two; CURRENTLY NOT IMPLEMENTED IN SETTING
     "coverage_factor": 0.6,  # how much of the table surface we cover
     "num_markers": 30,  # How many particles of dirt to generate in the environment
     # settings for thresholds
@@ -152,7 +149,7 @@ class SawyerWipeRobosuiteEnv:
             If None is specified, the default configuration will be used.
     """
 
-    def __init__(self):
+    def __init__(self, single_task_ml=False):
         self.env_configuration = "default"
         self.controller_configs = None
         self.gripper_types = "WipingGripper"
@@ -184,6 +181,7 @@ class SawyerWipeRobosuiteEnv:
         self.path_pos = None
         self.task_config = DEFAULT_WIPE_CONFIG
         self.num_markers = self.task_config["num_markers"]
+        self.single_task_ml = single_task_ml
 
         # Necessary for setting the subtasks correctly
         self._set_task_called = False
@@ -211,7 +209,6 @@ class SawyerWipeRobosuiteEnv:
         #     if ((i + 1) % 2) == 0:
         #         col = 0
         #         row += 1
-
 
     def __call__(self):
         return GymWrapper(
@@ -247,5 +244,6 @@ class SawyerWipeRobosuiteEnv:
                 metalearning=self.metalearning,
                 start_pos=self.start_pos,
                 path_pos=self.path_pos,
-            )
+            ),
+            single_task_ml=self.single_task_ml,
         )
