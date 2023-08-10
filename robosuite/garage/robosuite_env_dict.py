@@ -67,7 +67,7 @@ ROBOSUITEML = OrderedDict(
                     ("pick-place-milk", SawyerPickplacemilkRobosuiteEnv()),
                     ("pick-place-cereal", SawyerPickplacecerealRobosuiteEnv()),
                     ("nut-assembly-round", SawyerNutassemblyroundRobosuiteEnv()),
-                    ("nut-assembly-square", SawyerNutassemblysquareRobosuiteEnv()),
+                    ("nut-assembly-mixed", SawyerNutassemblyRobosuiteEnv()),
                     ("door-open", SawyerDoorRobosuiteEnv()),
                 )
             ),
@@ -77,7 +77,7 @@ ROBOSUITEML = OrderedDict(
             OrderedDict(
                 (
                     ("pick-place-can", SawyerPickplacecanRobosuiteEnv()),
-                    ("nut-assembly-mixed", SawyerNutassemblyRobosuiteEnv()),
+                    ("nut-assembly-square", SawyerNutassemblysquareRobosuiteEnv()),
                     ("stack-blocks", SawyerStackRobosuiteEnv()),
                 )
             ),

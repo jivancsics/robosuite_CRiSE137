@@ -186,6 +186,7 @@ class SawyerDoorRobosuiteEnv:
         return GymWrapper(
             suite.make(
                 "Door",
+                robots="Sawyer",
                 env_configuration=self.env_configuration,
                 controller_configs=self.controller_configs,
                 gripper_types=self.gripper_types,

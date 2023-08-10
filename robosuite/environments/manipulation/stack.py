@@ -240,16 +240,20 @@ class Stack(SingleArmEnv):
         Returns:
             float: reward value
         """
+        success = False
         r_reach, r_lift, r_stack = self.staged_rewards()
         if self.reward_shaping:
             reward = max(r_reach, r_lift, r_stack)
         else:
             reward = 2.0 if r_stack > 0 else 0.0
 
+        if r_stack > 0:
+            success = True
+
         if self.reward_scale is not None:
             reward *= self.reward_scale / 2.0
 
-        return reward
+        return reward, success
 
     def staged_rewards(self):
         """
@@ -498,3 +502,21 @@ class Stack(SingleArmEnv):
         # Color the gripper visualization site according to its distance to the cube
         if vis_settings["grippers"]:
             self._visualize_gripper_to_target(gripper=self.robots[0].gripper, target=self.cubeA)
+
+    def _post_action(self, action):
+        """
+                Do any housekeeping after taking an action.
+                Args:
+                    action (np.array): Action to execute within the environment
+                Returns:
+                    3-tuple:
+                        - (float) reward from the environment
+                        - (bool) whether the current episode is completed or not
+                        - (dict) dict filled with success information
+        """
+        reward, success = self.reward(action)
+
+        # done if number of elapsed timesteps is greater than horizon
+        self.done = (self.timestep >= self.horizon) and not self.ignore_done
+
+        return reward, self.done, {"success": success}

@@ -138,12 +138,14 @@ class GymWrapper(Wrapper, Env):
                                       [0] * (observation_dim - 14))  # fill with zeros
 
             elif 'robosuite.environments.manipulation.nut_assembly.NutAssemblyRound' in env_name:
-                ob_lst[1] = np.insert(ob_lst[1], [14] * (observation_dim - 14),
-                                      [0] * (observation_dim - 14))  # fill with zeros
+                ob_lst[1] = np.insert(ob_lst[1], [0] * 14,
+                                      [0] * 14)  # fill square nut entries with zeros
+                ob_lst[1] = np.insert(ob_lst[1], [28] * (observation_dim - 28),
+                                      [0] * (observation_dim - 28))  # fill round nut entries with zeros
 
             elif 'robosuite.environments.manipulation.nut_assembly.NutAssemblySquare' in env_name:
                 ob_lst[1] = np.insert(ob_lst[1], [14] * (observation_dim - 14),
-                                      [0] * (observation_dim - 14))  # fill with zeros
+                                      [0] * (observation_dim - 14))  # fill round nut entries with zeros
 
             elif 'robosuite.environments.manipulation.nut_assembly.NutAssembly' in env_name:
                 ob_lst[1] = np.insert(ob_lst[1], [28] * (observation_dim - 28),

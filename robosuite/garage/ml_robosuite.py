@@ -73,7 +73,7 @@ def _make_tasks(classes, args_kwargs, seed=None, single_task_ml=False):
             if env_name == "nut-assembly-mixed":
                 y_pos_square = np.random.uniform(low=0.10, high=0.225)
                 x_pos_square = np.random.uniform(low=-0.13, high=-0.10)
-                rot_square = np.random.uniform(low=0, high=np.pi/2.0)
+                rot_square = np.random.uniform(low=0, high=np.pi / 4.0)
                 y_pos_round = np.random.uniform(low=-0.225, high=-0.10)
                 x_pos_round = np.random.uniform(low=-0.13, high=-0.10)
                 rot_round = np.random.uniform(low=0, high=np.pi / 2.0)
@@ -81,7 +81,7 @@ def _make_tasks(classes, args_kwargs, seed=None, single_task_ml=False):
             elif env_name == "nut-assembly-square":
                 y_pos_square = np.random.uniform(low=0.10, high=0.225)
                 x_pos_square = np.random.uniform(low=-0.13, high=-0.10)
-                rot_square = np.random.uniform(low=0, high=np.pi / 2.0)
+                rot_square = np.random.uniform(low=0, high=np.pi / 4.0)
                 rand_vecs.append([x_pos_square, y_pos_square, rot_square])
             elif env_name == "nut-assembly-round":
                 y_pos_round = np.random.uniform(low=-0.225, high=-0.10)
@@ -89,30 +89,31 @@ def _make_tasks(classes, args_kwargs, seed=None, single_task_ml=False):
                 rot_round = np.random.uniform(low=0, high=np.pi / 2.0)
                 rand_vecs.append([x_pos_round, y_pos_round, rot_round])
             elif env_name == "blocklifting":
-                x_pos = np.random.uniform(low=-0.2, high=0.2)
-                y_pos = np.random.uniform(low=-0.2, high=0.2)
-                rot = np.random.uniform(low=0, high=np.pi / 2.0)
+                x_pos = np.random.uniform(low=-0.30, high=0.30)
+                y_pos = np.random.uniform(low=-0.30, high=0.30)
+                rot = np.random.uniform(low=0, high=np.pi / 4.0)
                 rand_vecs.append([x_pos, y_pos, rot])
             elif env_name == "stack-blocks":
-                x_pos_a = np.random.uniform(low=-0.3, high=0.3)
-                y_pos_a = np.random.uniform(low=-0.3, high=0.3)
-                rot_a = np.random.uniform(low=0, high=np.pi / 2.0)
-                vec_cubea = np.array([y_pos_a, x_pos_a])
+                x_pos_a = np.random.uniform(low=-0.30, high=0.30)
+                y_pos_a = np.random.uniform(low=-0.30, high=0.30)
+                rot_a = np.random.uniform(low=0, high=np.pi / 4.0)
+                vec_cubea = np.array([x_pos_a, y_pos_a])
                 while True:
-                    x_pos_b = np.random.uniform(low=-0.3, high=0.3)
-                    y_pos_b = np.random.uniform(low=-0.3, high=0.3)
-                    vec_cubeb = np.array([y_pos_b, x_pos_b])
+                    x_pos_b = np.random.uniform(low=-0.30, high=0.30)
+                    y_pos_b = np.random.uniform(low=-0.30, high=0.30)
+                    vec_cubeb = np.array([x_pos_b, y_pos_b])
                     dist_ab = np.linalg.norm(vec_cubea - vec_cubeb)
 
                     """
-                    Cube dimensions cubeA = [0.02, 0.02, 0.02], cubeB = [0.025, 0.025, 0.025] =>
-                    radius from origin around cubeA ~ 0.015, cubeB ~ 0.018 => cubeA + cubeB ~ 0.033
-                    with a margin dist_AB > 0.04, else resampling of cubeB
+                    Cube dimensions cubeA = [0.04, 0.04, 0.04], cubeB = [0.05, 0.05, 0.05] =>
+                    radius from origin around cubeA = sqrt(2 * (0.02 * 0.02), 
+                    radius cubeB = sqrt(2 * (0.025 * 0.025) => 
+                    dist_AB > radius cubeA + radius cubeB, else resampling of cubeB
                     """
 
-                    if dist_ab > 0.04:
+                    if dist_ab > (np.sqrt(2 * (0.02 * 0.02)) + np.sqrt(2 * (0.025 * 0.025))):
                         break
-                rot_b = np.random.uniform(low=0, high=np.pi / 2.0)
+                rot_b = np.random.uniform(low=0, high=np.pi / 4.0)
                 rand_vecs.append([x_pos_a, y_pos_a, rot_a, x_pos_b, y_pos_b, rot_b])
             elif env_name in ("pick-place-mixed", "pick-place-bread", "pick-place-milk",
                               "pick-place-cereal", "pick-place-can"):

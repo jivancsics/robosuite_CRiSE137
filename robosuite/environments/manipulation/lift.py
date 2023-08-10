@@ -233,10 +233,12 @@ class Lift(SingleArmEnv):
             float: reward value
         """
         reward = 0.0
+        success = False
 
         # sparse completion reward
         if self._check_success():
             reward = 2.25
+            success = True
 
         # use a shaping reward
         elif self.reward_shaping:
@@ -256,7 +258,7 @@ class Lift(SingleArmEnv):
         if self.reward_scale is not None:
             reward *= self.reward_scale / 2.25
 
-        return reward
+        return reward, success
 
     def _load_model(self):
         """
@@ -426,3 +428,21 @@ class Lift(SingleArmEnv):
 
         # cube is higher than the table top above a margin
         return cube_height > table_height + 0.04
+
+    def _post_action(self, action):
+        """
+                Do any housekeeping after taking an action.
+                Args:
+                    action (np.array): Action to execute within the environment
+                Returns:
+                    3-tuple:
+                        - (float) reward from the environment
+                        - (bool) whether the current episode is completed or not
+                        - (dict) dict filled with success information
+        """
+        reward, success = self.reward(action)
+
+        # done if number of elapsed timesteps is greater than horizon
+        self.done = (self.timestep >= self.horizon) and not self.ignore_done
+
+        return reward, self.done, {"success": success}
