@@ -4,18 +4,19 @@ from garage.experiment.deterministic import set_seed
 from robosuite.garage.robosuiteml_set_task_env import RobosuiteMLSetTaskEnv
 from garage.experiment import MetaEvaluator
 from robosuite.garage.robosuite_task_sampler import RobosuiteTaskSampler, SetTaskSampler
-from robosuite.garage.ml_robosuite import SingleMLRobosuite
+from robosuite.garage.ml_robosuite import IIWA14MLRobosuite
 from garage.sampler import RaySampler, LocalSampler
 from garage.torch.algos import MAMLTRPO
 from garage.torch.policies import GaussianMLPPolicy
 from garage.torch.value_functions import GaussianMLPValueFunction
 from garage.trainer import Trainer
 import torch
+from garage.torch import set_gpu_mode
 
 @wrap_experiment(snapshot_mode='none')
-def singleml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
-    """Function which sets up and starts a MAML based single task Meta Learning experiment on the
-    Robosuite benchmark. This experiment resembles the ML1 experiment in MetaWorld.
+def ml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
+    """Function which sets up and starts a MAML based Meta Learning experiment on the Robosuite benchmark.
+    This experiment resembles the ML10 experiment in MetaWorld. Robot used: Rethink Robotics Sawyer
 
     Arguments:
         ctxt: Experiment context configuration from the wrap_experiment wrapper, used by Trainer class
@@ -26,12 +27,12 @@ def singleml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """
     # Set up the environment
     set_seed(seed)
-    ml1 = SingleMLRobosuite('blocklifting')
-    all_train_subtasks = RobosuiteTaskSampler(ml1, 'train')
-    all_test_subtasks = RobosuiteTaskSampler(ml1, 'test')
-    tasks = all_train_subtasks.sample(20)
-    env = tasks[0]()
-    # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml1, 'test'))
+    ml = IIWA14MLRobosuite()
+    all_ml_train_subtasks = RobosuiteTaskSampler(ml, 'train')
+    sampled_subtasks = all_ml_train_subtasks.sample(meta_batch_size)  # 14 subtasks overall = 2 task per class
+    all_ml_test_subtasks = RobosuiteTaskSampler(ml, 'test')
+    env = sampled_subtasks[0]()
+    # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml, 'test'))
 
     policy = GaussianMLPPolicy(
         env_spec=env.spec,
@@ -44,28 +45,29 @@ def singleml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
                                               hidden_nonlinearity=torch.tanh,
                                               output_nonlinearity=None)
 
-    meta_evaluator = MetaEvaluator(test_task_sampler=all_test_subtasks,
-                                   n_test_tasks=1,
+    meta_evaluator = MetaEvaluator(test_task_sampler=all_ml_test_subtasks,
+                                   n_test_tasks=(int(meta_batch_size/7)*len(all_ml_test_subtasks._classes)),
                                    n_exploration_eps=episodes_per_task,
                                    is_robosuite_ml=True,)
 
     # sampler = RaySampler(agents=policy,
     #                      envs=env,
-    #                      max_episode_length=env.spec.max_episode_length,
-    #                      n_workers=meta_batch_size)
+    #                      max_episode_length=env.spec.max_episode_length)
+    #                      #n_workers=meta_batch_size)
+
 
     sampler = LocalSampler(
         agents=policy,
-        envs=tasks,
+        envs=sampled_subtasks,
         max_episode_length=env.spec.max_episode_length,
         is_tf_worker=False,
-        n_workers=meta_batch_size)
+        n_workers=meta_batch_size,)
 
     trainer = Trainer(ctxt)
     algo = MAMLTRPO(env=env,
                     policy=policy,
                     sampler=sampler,
-                    task_sampler=all_train_subtasks,
+                    task_sampler=all_ml_train_subtasks,
                     value_function=value_function,
                     meta_batch_size=meta_batch_size,
                     discount=0.99,
@@ -78,6 +80,11 @@ def singleml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
                     meta_evaluator=meta_evaluator,  # meta_batch_size = how many tasks to sample for training
                     evaluate_every_n_epochs=1)
 
+    # if torch.cuda.is_available():
+    #     set_gpu_mode(True)
+    # else:
+    #     set_gpu_mode(False)
+    # algo.to() no GPU mode available for MAMLTRPO
     trainer.setup(algo, env)
     trainer.train(n_epochs=epochs,
                   batch_size=episodes_per_task * env.spec.max_episode_length)   # batch_size = batch length per task
@@ -89,10 +96,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=1, help='Random seed to use for reproducibility')
     parser.add_argument('--epochs', type=int, default=3500, help='Epochs to execute')
-    parser.add_argument('--episodes_per_task', type=int, default=10, help='Number of episodes to sample per task')
-    parser.add_argument('--meta_batch_size', type=int, default=20,
+    parser.add_argument('--episodes_per_task', type=int, default=10, help='Number of episodes to sample per task')  # 10 default
+    parser.add_argument('--meta_batch_size', type=int, default=14,  # 14 default
                         help='Tasks which are sampled per batch')
 
     args = parser.parse_args()
-    singleml_maml_trpo(seed=args.seed, epochs=args.epochs, episodes_per_task=args.episodes_per_task,
-                       meta_batch_size=args.meta_batch_size)
+    ml_maml_trpo(seed=args.seed, epochs=args.epochs, episodes_per_task=args.episodes_per_task,
+                 meta_batch_size=args.meta_batch_size)

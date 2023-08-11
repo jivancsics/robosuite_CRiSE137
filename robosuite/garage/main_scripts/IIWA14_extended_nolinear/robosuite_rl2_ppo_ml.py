@@ -4,7 +4,7 @@ from garage.experiment.deterministic import set_seed
 from robosuite.garage.robosuiteml_set_task_env import RobosuiteMLSetTaskEnv
 from garage.experiment import MetaEvaluator
 from robosuite.garage.robosuite_task_sampler import RobosuiteTaskSampler, SetTaskSampler
-from robosuite.garage.ml_robosuite import MLRobosuite
+from robosuite.garage.ml_robosuite import IIWA14MLRobosuite
 from garage.sampler import RaySampler, LocalSampler
 from garage.tf.algos import RL2PPO
 from garage.tf.policies import GaussianGRUPolicy
@@ -28,7 +28,7 @@ def ml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """
     # Set up the environment
     set_seed(seed)
-    ml = MLRobosuite()
+    ml = IIWA14MLRobosuite()
     all_ml_train_subtasks = RobosuiteTaskSampler(ml, 'train', lambda env, _: RL2Env(env))
     tasks = all_ml_train_subtasks.sample(meta_batch_size)
     all_ml_test_subtasks = RobosuiteTaskSampler(ml, 'test', lambda env, _: RL2Env(env))

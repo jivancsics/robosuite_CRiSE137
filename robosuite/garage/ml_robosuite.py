@@ -176,38 +176,42 @@ def _make_tasks(classes, args_kwargs, seed=None, single_task_ml=False):
     return tasks
 
 
-def _singleml_env_names():
-    tasks = list(_env_dict.ROBOSUITESINGLEML["train"])
+def _sawyer_singleml_env_names():
+    tasks = list(_env_dict.ROBOSUITESINGLEML_SAWYER["train"])
+    return tasks
+
+def _iiwa14_singleml_env_names():
+    tasks = list(_env_dict.ROBOSUITESINGLEML_IIWA14["train"])
     return tasks
 
 
-class MLRobosuite(Benchmark):
+class SawyerMLRobosuite(Benchmark):
     def __init__(self, seed=None):
         super().__init__()
-        self._train_classes = _env_dict.ROBOSUITEML["train"]
-        self._test_classes = _env_dict.ROBOSUITEML["test"]
-        train_kwargs = _env_dict.robosuiteml_train_args_kwargs
+        self._train_classes = _env_dict.ROBOSUITEML_SAWYER["train"]
+        self._test_classes = _env_dict.ROBOSUITEML_SAWYER["test"]
+        train_kwargs = _env_dict.robosuiteml_sawyer_train_args_kwargs
         self._train_tasks = _make_tasks(
             self._train_classes, train_kwargs, seed=seed
         )
-        test_kwargs = _env_dict.robosuiteml_test_args_kwargs
+        test_kwargs = _env_dict.robosuiteml_sawyer_test_args_kwargs
         self._test_tasks = _make_tasks(
             self._test_classes, test_kwargs, seed=seed
         )
 
 
-class SingleMLRobosuite(Benchmark):
-    ENV_NAMES = _singleml_env_names()
+class SawyerSingleMLRobosuite(Benchmark):
+    ENV_NAMES = _sawyer_singleml_env_names()
 
     def __init__(self, env_name, seed=None):
         super().__init__()
-        if env_name not in _env_dict.ALL_ROBOSUITE_SINGLE_ML_TASK_ENVIRONMENTS:
+        if env_name not in _env_dict.ALL_ROBOSUITE_SINGLE_ML_TASK_SAWYER_ENVIRONMENTS:
             raise ValueError(f"{env_name} is not a Robosuite ML environment")
-        cls = _env_dict.ALL_ROBOSUITE_SINGLE_ML_TASK_ENVIRONMENTS[env_name]
+        cls = _env_dict.ALL_ROBOSUITE_SINGLE_ML_TASK_SAWYER_ENVIRONMENTS[env_name]
         self._train_classes = OrderedDict([(env_name, cls)])
         self._test_classes = self._train_classes
         self._train_ = OrderedDict([(env_name, cls)])
-        args_kwargs = _env_dict.ML1_args_kwargs[env_name]
+        args_kwargs = _env_dict.ML1_SAWYER_args_kwargs[env_name]
 
         # Make sure that train tasks and test tasks are not the same
         # Use the built in functionality of _make_tasks to fulfill this requirement
@@ -217,4 +221,40 @@ class SingleMLRobosuite(Benchmark):
         del self._train_tasks[50:100]
 
 
-__all__ = ["MLRobosuite", "SingleMLRobosuite"]
+class IIWA14MLRobosuite(Benchmark):
+    def __init__(self, seed=None):
+        super().__init__()
+        self._train_classes = _env_dict.ROBOSUITEML_IIWA14["train"]
+        self._test_classes = _env_dict.ROBOSUITEML_IIWA14["test"]
+        train_kwargs = _env_dict.robosuiteml_iiwa14_train_args_kwargs
+        self._train_tasks = _make_tasks(
+            self._train_classes, train_kwargs, seed=seed
+        )
+        test_kwargs = _env_dict.robosuiteml_iiwa14_test_args_kwargs
+        self._test_tasks = _make_tasks(
+            self._test_classes, test_kwargs, seed=seed
+        )
+
+
+class IIWA14SingleMLRobosuite(Benchmark):
+    ENV_NAMES = _iiwa14_singleml_env_names()
+
+    def __init__(self, env_name, seed=None):
+        super().__init__()
+        if env_name not in _env_dict.ALL_ROBOSUITE_SINGLE_ML_TASK_IIWA14_ENVIRONMENTS:
+            raise ValueError(f"{env_name} is not a Robosuite ML environment")
+        cls = _env_dict.ALL_ROBOSUITE_SINGLE_ML_TASK_IIWA14_ENVIRONMENTS[env_name]
+        self._train_classes = OrderedDict([(env_name, cls)])
+        self._test_classes = self._train_classes
+        self._train_ = OrderedDict([(env_name, cls)])
+        args_kwargs = _env_dict.ML1_IIWA14_args_kwargs[env_name]
+
+        # Make sure that train tasks and test tasks are not the same
+        # Use the built in functionality of _make_tasks to fulfill this requirement
+        self._train_tasks = _make_tasks(
+            self._train_classes, {env_name: args_kwargs}, seed=seed, single_task_ml=True,)
+        self._test_tasks = self._train_tasks[50:100]
+        del self._train_tasks[50:100]
+
+
+__all__ = ["SawyerMLRobosuite", "SawyerSingleMLRobosuite", "IIWA14MLRobosuite", "IIWA14SingleMLRobosuite"]

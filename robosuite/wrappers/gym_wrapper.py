@@ -100,6 +100,10 @@ class GymWrapper(Wrapper, Env):
         ob_lengths = []
         ob_lut = {}
         observation_dim = 33
+        if 'IIWA14_extended_nolinear' in self.env.robot_names:
+            robot_state_dim = 40
+        else:
+            robot_state_dim = 32
 
         if self.single_task_ml:
             ob_lst = []
@@ -119,7 +123,7 @@ class GymWrapper(Wrapper, Env):
                     ob_lst.append(np.array(obs_dict[key]).flatten())
                     ob_lengths.append(obs_dict[key].size)
                     if i == 1:
-                        if ob_lengths[i] == 32:
+                        if ob_lengths[i] == robot_state_dim:
                             ob_lst = ob_lst[i:] + ob_lst[:i]
 
             if 'robosuite.environments.manipulation.door.Door' in env_name:
