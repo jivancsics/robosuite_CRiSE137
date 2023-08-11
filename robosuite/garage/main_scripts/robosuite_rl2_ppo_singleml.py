@@ -29,8 +29,8 @@ def singleml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     # Set up the environment
     set_seed(seed)
     ml1 = SingleMLRobosuite('blocklifting')
-    all_train_subtasks = RobosuiteTaskSampler(ml1, 'train')
-    all_test_subtasks = RobosuiteTaskSampler(ml1, 'test')
+    all_train_subtasks = RobosuiteTaskSampler(ml1, 'train', lambda env, _: RL2Env(env))
+    all_test_subtasks = RobosuiteTaskSampler(ml1, 'test', lambda env, _: RL2Env(env))
     tasks = all_train_subtasks.sample(25)
     env = tasks[0]()
     # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml1, 'test'))
