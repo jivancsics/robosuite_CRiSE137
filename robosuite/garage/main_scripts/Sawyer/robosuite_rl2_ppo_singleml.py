@@ -94,7 +94,7 @@ if __name__ == "__main__":
     parser.add_argument('--seed', type=int, default=1, help='Random seed to use for reproducibility')
     parser.add_argument('--epochs', type=int, default=3500, help='Epochs to execute')
     parser.add_argument('--episodes_per_task', type=int, default=10, help='Number of episodes to sample per task')
-    parser.add_argument('--meta_batch_size', type=int, default=20,  # 25 default
+    parser.add_argument('--meta_batch_size', type=int, default=20,  # 20 default
                         help='Tasks which are sampled per batch')
 
     args = parser.parse_args()
