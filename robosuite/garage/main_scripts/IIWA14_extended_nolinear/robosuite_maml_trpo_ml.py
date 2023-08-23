@@ -13,7 +13,7 @@ from garage.trainer import Trainer
 import torch
 from garage.torch import set_gpu_mode
 
-@wrap_experiment(snapshot_mode='none')
+@wrap_experiment(snapshot_mode='last')
 def ml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """Function which sets up and starts a MAML based Meta Learning experiment on the Robosuite benchmark.
     This experiment resembles the ML10 experiment in MetaWorld. Robot used: Rethink Robotics Sawyer
@@ -96,8 +96,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=1, help='Random seed to use for reproducibility')
     parser.add_argument('--epochs', type=int, default=3500, help='Epochs to execute')
-    parser.add_argument('--episodes_per_task', type=int, default=10, help='Number of episodes to sample per task')  # 10 default
-    parser.add_argument('--meta_batch_size', type=int, default=14,  # 14 default
+    parser.add_argument('--episodes_per_task', type=int, default=2, help='Number of episodes to sample per task')  # 10 default
+    parser.add_argument('--meta_batch_size', type=int, default=7,  # 14 default
                         help='Tasks which are sampled per batch')
 
     args = parser.parse_args()

@@ -14,7 +14,7 @@ from garage.tf.algos.rl2 import RL2Env, RL2Worker
 import tensorflow as tf
 from garage.torch import set_gpu_mode
 
-@wrap_experiment(snapshot_mode='none')
+@wrap_experiment(snapshot_mode='last')
 def singleml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """Function which sets up and starts an RL2 based single task Meta Learning experiment on the
     Robosuite benchmark. This experiment resembles the ML1 experiment in MetaWorld.
@@ -31,7 +31,7 @@ def singleml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     ml1 = IIWA14SingleMLRobosuite('blocklifting')
     all_train_subtasks = RobosuiteTaskSampler(ml1, 'train', lambda env, _: RL2Env(env))
     all_test_subtasks = RobosuiteTaskSampler(ml1, 'test', lambda env, _: RL2Env(env))
-    tasks = all_train_subtasks.sample(20)
+    tasks = all_train_subtasks.sample(meta_batch_size)
     env = tasks[0]()
     # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml1, 'test'))
 

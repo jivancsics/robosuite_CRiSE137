@@ -791,8 +791,8 @@ if __name__ == "__main__":
             list_info.append(info)
 
             env.render()  # render on display
-            # if i == 100 or i == 300:
-            #     env.reset()
+            if i == 250:
+                env.reset()
 
         env.close()
 

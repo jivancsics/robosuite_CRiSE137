@@ -13,7 +13,7 @@ from garage.trainer import Trainer
 import torch
 from garage.torch import set_gpu_mode
 
-@wrap_experiment(snapshot_mode='none')
+@wrap_experiment(snapshot_mode='last')
 def ml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """Function which sets up and starts a MAML based Meta Learning experiment on the Robosuite benchmark.
     This experiment resembles the ML10 experiment in MetaWorld. Robot used: Rethink Robotics Sawyer

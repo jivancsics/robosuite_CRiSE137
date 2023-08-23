@@ -12,7 +12,7 @@ from garage.torch.value_functions import GaussianMLPValueFunction
 from garage.trainer import Trainer
 import torch
 
-@wrap_experiment(snapshot_mode='none')
+@wrap_experiment(snapshot_mode='last')
 def singleml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """Function which sets up and starts a MAML based single task Meta Learning experiment on the
     Robosuite benchmark. This experiment resembles the ML1 experiment in MetaWorld. Robot used: Rethink Robotics Sawyer
@@ -29,7 +29,7 @@ def singleml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     ml1 = SawyerSingleMLRobosuite('blocklifting')
     all_train_subtasks = RobosuiteTaskSampler(ml1, 'train')
     all_test_subtasks = RobosuiteTaskSampler(ml1, 'test')
-    tasks = all_train_subtasks.sample(20)
+    tasks = all_train_subtasks.sample(meta_batch_size)
     env = tasks[0]()
     # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml1, 'test'))
 

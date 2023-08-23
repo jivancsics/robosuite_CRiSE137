@@ -1,3 +1,15 @@
+"""This file presents a collection of dictionaries which organize all Robosuite environment tasks in the appropriate
+combinations for executing the Reinforcement Meta Learning (RML) algorithms MAML and RL2.
+
+There are two common types of basic RML tasks:
+- RML on a single task environment (e.g. Blocklifting). This RML task mimics the ML1 case in Meta-World.
+- RML across different task environments which share structure (seven learning tasks and three test tasks in total).
+  This RML task mimics the ML10 case in Meta-World.
+
+The two robots Rethink Robotics Sawyer and Kuka IIWA14 (modified in its mounting position to simulate the real-world
+circumstances in the TU Vienna ACIN robot lab) operate in the appropriate Robosuite task environments.
+"""
+
 from collections import OrderedDict
 
 from robosuite.garage.Robosuite_Sawyer.robosuite_sawyer_pickplacebread import SawyerPickplacebreadRobosuiteEnv
@@ -140,6 +152,7 @@ ML1_SAWYER_args_kwargs = {
     )
     for key, _ in ROBOSUITESINGLEML_SAWYER["train"].items()
 }
+
 
 # Kuka IIWA14_extended_nolinear agent
 

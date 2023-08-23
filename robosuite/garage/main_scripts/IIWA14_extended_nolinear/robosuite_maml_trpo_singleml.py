@@ -12,7 +12,7 @@ from garage.torch.value_functions import GaussianMLPValueFunction
 from garage.trainer import Trainer
 import torch
 
-@wrap_experiment(snapshot_mode='none')
+@wrap_experiment(snapshot_mode='last')
 def singleml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """Function which sets up and starts a MAML based single task Meta Learning experiment on the
     Robosuite benchmark. This experiment resembles the ML1 experiment in MetaWorld. Robot used: Rethink Robotics Sawyer
@@ -29,7 +29,7 @@ def singleml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     ml1 = IIWA14SingleMLRobosuite('blocklifting')
     all_train_subtasks = RobosuiteTaskSampler(ml1, 'train')
     all_test_subtasks = RobosuiteTaskSampler(ml1, 'test')
-    tasks = all_train_subtasks.sample(20)
+    tasks = all_train_subtasks.sample(meta_batch_size)
     env = tasks[0]()
     # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml1, 'test'))
 
@@ -89,8 +89,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=1, help='Random seed to use for reproducibility')
     parser.add_argument('--epochs', type=int, default=3500, help='Epochs to execute')
-    parser.add_argument('--episodes_per_task', type=int, default=10, help='Number of episodes to sample per task')
-    parser.add_argument('--meta_batch_size', type=int, default=20,
+    parser.add_argument('--episodes_per_task', type=int, default=2, help='Number of episodes to sample per task')
+    parser.add_argument('--meta_batch_size', type=int, default=5,   # default 10
                         help='Tasks which are sampled per batch')
 
     args = parser.parse_args()
