@@ -163,7 +163,7 @@ class IIWA14NutassemblysquareRobosuiteEnv:
         self.control_freq = 20
         self.horizon = 500
         self.ignore_done = False
-        self.hard_reset = True
+        self.hard_reset = False
         self.camera_names = "agentview"
         self.camera_heights = 256
         self.camera_widths = 256

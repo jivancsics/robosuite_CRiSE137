@@ -146,7 +146,7 @@ class SawyerBlockliftingRobosuiteEnv:
         self.render_visual_mesh = True
         self.render_gpu_device_id = -1
         self.ignore_done = False
-        self.hard_reset = True
+        self.hard_reset = False
         self.camera_names = "agentview"
         self.camera_heights = 256
         self.camera_widths = 256
