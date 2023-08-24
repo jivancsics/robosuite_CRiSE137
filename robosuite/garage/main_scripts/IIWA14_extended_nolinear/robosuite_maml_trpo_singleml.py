@@ -12,7 +12,7 @@ from garage.torch.value_functions import GaussianMLPValueFunction
 from garage.trainer import Trainer
 import torch
 
-@wrap_experiment(snapshot_mode='last')
+@wrap_experiment(snapshot_mode='gap', snapshot_gap=10)
 def singleml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """Function which sets up and starts a MAML based single task Meta Learning experiment on the
     Robosuite benchmark. This experiment resembles the ML1 experiment in MetaWorld. Robot used: Rethink Robotics Sawyer
@@ -76,7 +76,7 @@ def singleml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
                     num_grad_updates=1,
                     policy_ent_coeff=0.0,   # 5e-5 mentioned in the MetaWorld paper, but exact type is missing
                     meta_evaluator=meta_evaluator,  # meta_batch_size = how many tasks to sample for training
-                    evaluate_every_n_epochs=1)
+                    evaluate_every_n_epochs=10)
 
     trainer.setup(algo, env)
     trainer.train(n_epochs=epochs,
@@ -89,8 +89,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=1, help='Random seed to use for reproducibility')
     parser.add_argument('--epochs', type=int, default=3500, help='Epochs to execute')
-    parser.add_argument('--episodes_per_task', type=int, default=2, help='Number of episodes to sample per task')
-    parser.add_argument('--meta_batch_size', type=int, default=5,   # default 10
+    parser.add_argument('--episodes_per_task', type=int, default=10, help='Number of episodes to sample per task')
+    parser.add_argument('--meta_batch_size', type=int, default=20,   # default 20
                         help='Tasks which are sampled per batch')
 
     args = parser.parse_args()

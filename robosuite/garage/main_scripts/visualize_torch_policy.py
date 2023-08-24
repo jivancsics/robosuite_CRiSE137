@@ -23,15 +23,20 @@ if __name__ == "__main__":
         choice_robot = int(choice_robot)
 
         print("Please enter a number to see one of the following tasks:")
+        print("Train tasks:")
+        print("------------")
         print("[1] Open the Door")
         print("[2] Lift a block")
         print("[3] Round nut assembly")
-        print("[4] Square nut assembly")
-        print("[5] Mixed nut assembly")
-        print("[6] Pick and place milk")
-        print("[7] Pick and place cereal")
+        print("[4] Mixed nut assembly")
+        print("[5] Pick and place milk")
+        print("[6] Pick and place cereal")
+        print("[7] Pick and place bread")
+
+        print("Test tasks:")
+        print("-----------")
         print("[8] Pick and place can")
-        print("[9] Pick and place bread")
+        print("[9] Square nut assembly")
         print("[10] Stack blocks")
 
         choice = input("Enter your number of choice: ")
@@ -138,7 +143,7 @@ if __name__ == "__main__":
                     hard_reset=False,
                 )))
 
-            elif choice == 4:
+            elif choice == 9:
 
                 x_range_square = [-0.12, -0.12]
                 y_range_square = [0.15, 0.15]
@@ -188,7 +193,7 @@ if __name__ == "__main__":
                     hard_reset=False,
                 )))
 
-            elif choice == 5:
+            elif choice == 4:
 
                 x_range_square = [-0.12, -0.12]
                 y_range_square = [0.15, 0.15]
@@ -240,7 +245,7 @@ if __name__ == "__main__":
                     hard_reset=False,
                 )))
 
-            elif choice == 6:
+            elif choice == 5:
 
                 env = GymEnv(GymWrapper(suite.make(
                     env_name="PickPlaceMilk",
@@ -253,7 +258,7 @@ if __name__ == "__main__":
                     hard_reset=False,
                 )))
 
-            elif choice == 7:
+            elif choice == 6:
 
                 env = GymEnv(GymWrapper(suite.make(
                     env_name="PickPlaceCereal",
@@ -279,7 +284,7 @@ if __name__ == "__main__":
                     hard_reset=False,
                 )))
 
-            elif choice == 9:
+            elif choice == 7:
 
                 env = GymEnv(GymWrapper(suite.make(
                     env_name="PickPlaceBread",
@@ -476,7 +481,7 @@ if __name__ == "__main__":
                     hard_reset=False,
                 )))
 
-            elif choice == 4:
+            elif choice == 9:
 
                 x_range_square = [-0.12, -0.12]
                 y_range_square = [0.15, 0.15]
@@ -526,7 +531,7 @@ if __name__ == "__main__":
                     hard_reset=False,
                 )))
 
-            elif choice == 5:
+            elif choice == 4:
 
                 x_range_square = [-0.12, -0.12]
                 y_range_square = [0.15, 0.15]
@@ -578,7 +583,7 @@ if __name__ == "__main__":
                     hard_reset=False,
                 )))
 
-            elif choice == 6:
+            elif choice == 5:
 
                 env = GymEnv(GymWrapper(suite.make(
                     env_name="PickPlaceMilk",
@@ -591,7 +596,7 @@ if __name__ == "__main__":
                     hard_reset=False,
                 )))
 
-            elif choice == 7:
+            elif choice == 6:
 
                 env = GymEnv(GymWrapper(suite.make(
                     env_name="PickPlaceCereal",
@@ -617,7 +622,7 @@ if __name__ == "__main__":
                     hard_reset=False,
                 )))
 
-            elif choice == 9:
+            elif choice == 7:
 
                 env = GymEnv(GymWrapper(suite.make(
                     env_name="PickPlaceBread",
@@ -718,7 +723,7 @@ if __name__ == "__main__":
             raise Exception("Robot Error! Please enter [1] for the Sawyer or [2] for the Kuka IIWA14 robot!")
 
         snapshotter = Snapshotter()
-        data = snapshotter.load('IIWA14/data/local/experiment/singleml_maml_trpo_2')
+        data = snapshotter.load('IIWA14_extended_nolinear/data/local/experiment/ml_maml_trpo')
         policy = data['algo']
 
         steps = 0

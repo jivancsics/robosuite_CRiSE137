@@ -14,7 +14,7 @@ from garage.tf.algos.rl2 import RL2Env, RL2Worker
 import tensorflow as tf
 from garage.torch import set_gpu_mode
 
-@wrap_experiment(snapshot_mode='last')
+@wrap_experiment(snapshot_mode='gap', snapshot_gap=10)
 def singleml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """Function which sets up and starts an RL2 based single task Meta Learning experiment on the
     Robosuite benchmark. This experiment resembles the ML1 experiment in MetaWorld.
