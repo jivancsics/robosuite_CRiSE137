@@ -11,8 +11,6 @@ from robosuite.utils.mjcf_utils import CustomMaterial
 
 if __name__ == "__main__":
 
-    horizon = 500
-
     while True:
         print("Welcome to the RML Policy Viewer for Meta Learning across tasks!")
         print("Based on the learned policy, choose between the Rethink Robotics Sawyer and the Kuka "
@@ -727,7 +725,7 @@ if __name__ == "__main__":
         policy = data['algo']
 
         steps = 0
-        max_steps = 150
+        max_steps = 500
         done = False
         obs, _ = env.reset()
         policy.reset()
