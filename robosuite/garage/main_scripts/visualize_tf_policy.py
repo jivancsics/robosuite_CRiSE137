@@ -1165,7 +1165,7 @@ def visualize_tf_policy():
                     use_camera_obs=False,
                     placement_initializer=placement_initializer,
                     hard_reset=False,
-                ), single_task_ml=True)))
+                ))))
 
             elif choice == 3:
 
