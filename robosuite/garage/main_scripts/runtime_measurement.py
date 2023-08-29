@@ -8,11 +8,24 @@ from robosuite.garage.main_scripts.gym_wrapper_runtimeanalysis import GymWrapper
 from garage.envs import GymEnv
 import numpy as np
 from matplotlib import pyplot as plt
+import matplotlib
+
+# Configure .pgf LaTex export
+matplotlib.use("pgf")
+matplotlib.rcParams.update({
+    "pgf.texsystem": "pdflatex",
+    'font.family': 'serif',
+    'text.usetex': True,
+    'pgf.rcfonts': False,
+})
 
 
 robots = ["Sawyer", "IIWA", "IIWA14_extended_nolinear"]
 envs = ["Lift", "Stack", "NutAssembly", "NutAssemblySquare", "NutAssemblyRound", "PickPlaceMilk",
         "PickPlaceBread", "PickPlaceCereal", "PickPlaceCan", "Door"]
+name_of_envs = ["LiftBlock", "StackBlocks", "NutAssemblyMixed", "NutAssemblySquare", "NutAssemblyRound",
+                "PickPlaceMilk", "PickPlaceBread", "PickPlaceCereal", "PickPlaceCan", "OpenDoor"]
+
 
 class RobosuiteEnv:
     def __init__(self, env_name, robot):
@@ -38,7 +51,7 @@ class RobosuiteEnv:
         for steps in range(self.horizon):
             action = np.random.randn(self.env.unwrapped.robots[0].dof)
             start = time()
-            envstep = self.env.step(action)
+            _ = self.env.step(action)
             end = time()
             per_step_env_runtime.append(end - start)
 
@@ -73,6 +86,7 @@ if __name__ == "__main__":
     plt.yticks(bar_y_pos, robots)
     plt.title("Mean per-environment-step runtime over all Meta 7 train/test tasks", fontsize=20)
     plt.xlabel("Mean runtime (ms)", fontsize=10)
+    plt.savefig('runtime_measurements_average.pgf')
 
     figure, axis = plt.subplots()
     index = np.arange(len(envs))
@@ -81,11 +95,12 @@ if __name__ == "__main__":
     bars_iiwa = plt.bar(index + width_single_bar, all_runtimes_per_env[1, :], width_single_bar,
                         color="g", label=robots[1])
     bars_iiwa14 = plt.bar(index + 2 * width_single_bar, all_runtimes_per_env[2, :], width_single_bar,
-                        color="y", label=robots[2])
+                          color="y", label=robots[2])
     plt.xlabel("Meta 7 task environments", fontsize=10)
     plt.ylabel("Mean runtime (ms)", fontsize=10)
     plt.title("Mean per-environment-step runtime of all Meta 7 train/test tasks", fontsize=20)
-    plt.xticks(index + width_single_bar, envs)
+    plt.xticks(index + width_single_bar, name_of_envs)
     plt.legend()
     plt.tight_layout()
+    plt.savefig('runtime_measurements_AllMeta7Tasks.pgf')
     plt.show()
