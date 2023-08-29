@@ -11,13 +11,13 @@ from matplotlib import pyplot as plt
 import matplotlib
 
 # Configure .pgf LaTex export
-matplotlib.use("pgf")
-matplotlib.rcParams.update({
-    "pgf.texsystem": "pdflatex",
-    'font.family': 'serif',
-    'text.usetex': True,
-    'pgf.rcfonts': False,
-})
+# matplotlib.use("pgf")
+# matplotlib.rcParams.update({
+#     "pgf.texsystem": "pdflatex",
+#     'font.family': 'serif',
+#     'text.usetex': True,
+#     'pgf.rcfonts': False,
+# })
 
 
 robots = ["Sawyer", "IIWA", "IIWA14_extended_nolinear"]
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     plt.yticks(bar_y_pos, robots)
     plt.title("Mean per-environment-step runtime over all Meta 7 train/test tasks", fontsize=20)
     plt.xlabel("Mean runtime (ms)", fontsize=10)
-    plt.savefig('runtime_measurements_average.pgf')
+    #  plt.savefig('runtime_measurements_average.pgf')
 
     figure, axis = plt.subplots()
     index = np.arange(len(envs))
@@ -102,5 +102,5 @@ if __name__ == "__main__":
     plt.xticks(index + width_single_bar, name_of_envs)
     plt.legend()
     plt.tight_layout()
-    plt.savefig('runtime_measurements_AllMeta7Tasks.pgf')
+    #  plt.savefig('runtime_measurements_AllMeta7Tasks.pgf')
     plt.show()

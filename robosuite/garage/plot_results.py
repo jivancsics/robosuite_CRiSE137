@@ -6,13 +6,13 @@ from matplotlib import pyplot as plt
 import matplotlib
 
 # Configure .pgf LaTex export
-matplotlib.use("pgf")
-matplotlib.rcParams.update({
-    "pgf.texsystem": "pdflatex",
-    'font.family': 'serif',
-    'text.usetex': True,
-    'pgf.rcfonts': False,
-})
+# matplotlib.use("pgf")
+# matplotlib.rcParams.update({
+#     "pgf.texsystem": "pdflatex",
+#     'font.family': 'serif',
+#     'text.usetex': True,
+#     'pgf.rcfonts': False,
+# })
 
 
 # Sawyer in Robosuite's blocklifting task (ML1) with MAML_TRPO and RL2_PPO
@@ -107,7 +107,7 @@ plt.setp(axis[1, 0], ylabel='Success Rate (%)')
 plt.setp(axis[1, 0], xlabel='Total Environment Steps')
 plt.setp(axis[1, 1], xlabel='Total Environment Steps')
 fig.suptitle('Lift Block Single RML with Sawyer', fontsize=20)
-fig.savefig('Meta1_Sawyer_LiftBlock.pgf')
+#  fig.savefig('Meta1_Sawyer_LiftBlock.pgf')
 
 
 # Sawyer in Meta-Worlds's ML10 with MAML_TRPO, RL2_PPO and PEARL
@@ -221,6 +221,7 @@ plt.setp(axis2[1, 0], ylabel='Success Rate (%)')
 plt.setp(axis2[1, 0], xlabel='Total Environment Steps')
 plt.setp(axis2[1, 1], xlabel='Total Environment Steps')
 fig2.suptitle('Meta-World ML10 with Sawyer', fontsize=20)
+#  fig2.savefig('ML10_Sawyer_MetaWorld.pgf')
 
 
 # Kuka IIWA14 with no linear axis in Robosuite's blocklifting task (ML1) with MAML_TRPO and RL2_PPO
@@ -315,6 +316,7 @@ plt.setp(axis3[1, 0], ylabel='Success Rate (%)')
 plt.setp(axis3[1, 0], xlabel='Total Environment Steps')
 plt.setp(axis3[1, 1], xlabel='Total Environment Steps')
 fig3.suptitle('Lift Block Single RML with IIWA14', fontsize=20)
+#  fig3.savefig('Meta1_IIWA14_LiftBlock.pgf')
 
 # Kuka IIWA14 with no linear axis in Meta 7 with MAML_TRPO and RL2_PPO
 # -------------------------------------------------------------------------------------------------
@@ -451,6 +453,7 @@ plt.setp(axis4[1, 0], ylabel='Average Success Rate (%)')
 plt.setp(axis4[1, 0], xlabel='Total Environment Steps')
 plt.setp(axis4[1, 1], xlabel='Total Environment Steps')
 fig4.suptitle('Meta 7 - RML across tasks with IIWA14', fontsize=20)
+#  fig4.savefig('Meta7_IIWA14_Robosuite.pgf')
 
 # Max success and return bar chart Meta 7 train/test tasks
 # Meta 7 test tasks RL2:
@@ -571,6 +574,7 @@ plt.setp(axis5[1, 0], ylabel='Test Tasks')
 plt.setp(axis5[1, 0], xlabel='Max Success Rate (%)')
 plt.setp(axis5[1, 1], xlabel='Max Return')
 fig5.suptitle('Meta 7 - Max Returns and Success Rates per Task with IIWA14', fontsize=20)
+#  fig5.savefig('Meta7_IIWA14_Robosuite_SuccessReturns.pgf')
 
 
 # Rethink Robotics Sawyer in Meta 7 with MAML_TRPO and RL2_PPO
@@ -708,6 +712,7 @@ plt.setp(axis6[1, 0], ylabel='Average Success Rate (%)')
 plt.setp(axis6[1, 0], xlabel='Total Environment Steps')
 plt.setp(axis6[1, 1], xlabel='Total Environment Steps')
 fig6.suptitle('Meta 7 - RML across tasks with Sawyer', fontsize=20)
+#  fig6.savefig('Meta7_Sawyer_Robosuite.pgf')
 
 # Max success and return bar chart Meta 7 train/test tasks
 # Meta 7 test tasks RL2:
@@ -828,5 +833,6 @@ plt.setp(axis7[1, 0], ylabel='Test Tasks')
 plt.setp(axis7[1, 0], xlabel='Max Success Rate (%)')
 plt.setp(axis7[1, 1], xlabel='Max Return')
 fig7.suptitle('Meta 7 - Max Returns and Success Rates per Task with Sawyer', fontsize=20)
+#  fig7.savefig('Meta7_Sawyer_Robosuite_SuccessReturns.pgf')
 """
 plt.show()
