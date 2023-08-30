@@ -2,10 +2,7 @@
 and costum, Robolab-imitating IIWA 14 robot with fixed linear axis"""
 
 import robosuite as suite
-from garage.tf.algos.rl2 import RL2Env
 from time import time
-from robosuite.garage.main_scripts.gym_wrapper_runtimeanalysis import GymWrapper
-from garage.envs import GymEnv
 import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib
@@ -33,7 +30,7 @@ class RobosuiteEnv:
         self.robot = robot
         self.horizon = 500
 
-        self.env = RL2Env(GymEnv(GymWrapper(suite.make(
+        self.env = suite.make(
             env_name=self.env_name,
             robots=self.robot,
             has_renderer=False,
@@ -41,21 +38,21 @@ class RobosuiteEnv:
             use_camera_obs=False,
             use_object_obs=True,
             hard_reset=False,
-        ))))
+        )
 
     def __call__(self):
         per_step_env_runtime = []
 
-        obs, _ = self.env.reset()
+        obs = self.env.reset()
 
         for steps in range(self.horizon):
-            action = np.random.randn(self.env.unwrapped.robots[0].dof)
+            action = np.random.randn(self.env.robots[0].dof)
             start = time()
             _ = self.env.step(action)
             end = time()
             per_step_env_runtime.append(end - start)
 
-        self.env.unwrapped.close()
+        self.env.close()
         return per_step_env_runtime
 
 
