@@ -744,6 +744,7 @@ def visualize_tf_policy():
             policy = data['algo'].policy
             obs, _ = env.reset()  # Initial observation
             policy.reset()
+            success_counter = 0
 
             for steps in range(horizon):
                 action, _ = policy.get_action(obs)
@@ -751,6 +752,11 @@ def visualize_tf_policy():
                 obs = envstep.observation
                 env.unwrapped.render()
                 sleep(0.005)
+
+                if envstep.env_info['success']:
+                    success_counter += 1
+                    if success_counter > 40:
+                        return
 
             env.unwrapped.close()
 
@@ -1467,6 +1473,7 @@ def visualize_tf_policy():
             policy = data['algo'].policy
             obs, _ = env.reset()  # Initial observation
             policy.reset()
+            success_counter = 0
 
             for steps in range(horizon):
                 action, _ = policy.get_action(obs)
@@ -1474,6 +1481,11 @@ def visualize_tf_policy():
                 obs = envstep.observation
                 env.unwrapped.render()
                 sleep(0.005)
+
+                if envstep.env_info['success']:
+                    success_counter += 1
+                    if success_counter > 40:
+                        return
 
             env.unwrapped.close()
 

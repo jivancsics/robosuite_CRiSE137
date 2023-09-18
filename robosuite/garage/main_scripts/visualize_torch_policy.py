@@ -743,6 +743,7 @@ def visualize_torch_policy():
             policy = data['algo']
             obs, _ = env.reset()
             policy.reset()
+            success_counter = 0
 
             for steps in range(horizon):
                 action, _ = policy.get_action(obs)
@@ -750,6 +751,11 @@ def visualize_torch_policy():
                 obs = envstep.observation
                 env.unwrapped.render()
                 sleep(0.005)
+
+                if envstep.env_info['success']:
+                    success_counter += 1
+                    if success_counter > 40:
+                        return
 
             env.unwrapped.close()
             end = input("Do you want to repeat the Meta 1 task visualization? Enter [Y]/[y] to repeat or "
@@ -1474,6 +1480,7 @@ def visualize_torch_policy():
             policy = data['algo']
             obs, _ = env.reset()
             policy.reset()
+            success_counter = 0
 
             for steps in range(horizon):
                 action, _ = policy.get_action(obs)
@@ -1481,6 +1488,11 @@ def visualize_torch_policy():
                 obs = envstep.observation
                 env.unwrapped.render()
                 sleep(0.005)
+
+                if envstep.env_info['success']:
+                    success_counter += 1
+                    if success_counter > 40:
+                        return
 
             env.unwrapped.close()
             end = input("Do you want to repeat the Meta 7 task visualization? Enter [Y]/[y] to repeat or "

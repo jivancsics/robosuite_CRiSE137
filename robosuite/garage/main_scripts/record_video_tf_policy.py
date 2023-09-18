@@ -1,4 +1,7 @@
-"""File for recording a video of a trained RL2-based policy on Meta 1 tasks as well as on Meta 7 tasks"""
+"""File for recording a video of a trained RL2-based policy on Meta 1 tasks as well as on Meta 7 tasks
+Also offers the option to take a screenshot of the initial task setup by setting argument 'screenshot_mode' in
+'record_tf_policy() to 'True'
+"""
 
 from garage.experiment import Snapshotter
 import tensorflow as tf
@@ -9,6 +12,7 @@ import robosuite.utils.macros as macros
 from robosuite.utils.placement_samplers import UniformRandomSampler, SequentialCompositeSampler
 from robosuite.models.objects import BoxObject
 from robosuite.utils.mjcf_utils import CustomMaterial
+from matplotlib import pyplot as plt
 
 # Setting image convention to OpenCV to make sure that the recorded video has a correct orientation
 macros.IMAGE_CONVENTION = "opencv"
@@ -123,7 +127,15 @@ def flatten_obs(obs_dict, env, single_task_ml, verbose=False):
         return np.concatenate(ob_lst)
 
 
-def record_tf_policy():
+def record_tf_policy(screenshot_mode=False):
+    """
+    Function for recording the resulting interactions of a Tensorflow-based policy (RL2) with the environment.
+
+    Args:
+        screenshot_mode (bool): If True, a screenshot of the initial task setup is taken and stored as a .png image
+
+    """
+
     tf.compat.v1.disable_eager_execution()
     horizon = 500
 
@@ -221,7 +233,7 @@ def record_tf_policy():
                     camera_widths=1024,
                     camera_heights=1024,
                 )
-                name = "LiftBlocks"
+                name = "LiftBlock"
 
             elif choice == 3:
 
@@ -608,7 +620,7 @@ def record_tf_policy():
                     camera_widths=1024,
                     camera_heights=1024,
                 )
-                name = "LiftBlocks"
+                name = "LiftBlock"
 
             elif choice == 3:
 
@@ -950,9 +962,15 @@ def record_tf_policy():
                 data = snapshotter.load('Sawyer/data/local/experiment/singleml_rl2_ppo')
             policy = data['algo'].policy
             obs_dict = env.reset()  # Initial observation
+
+            if screenshot_mode:
+                screenshot = obs_dict["frontview_image"]
+                plt.imsave("{}.png".format(name), screenshot)
+
             obs = flatten_obs(obs_dict, env, True)
             obs = np.concatenate([obs, np.zeros(8), [0], [0]])
             policy.reset()
+            success_counter = 0
 
             for steps in range(horizon):
                 action, _ = policy.get_action(obs)
@@ -973,6 +991,11 @@ def record_tf_policy():
                     obs = np.concatenate([obs, action, [reward], [0]])
                 else:
                     obs = np.concatenate([obs, action, [reward], [1]])
+
+                if info['success']:
+                    success_counter += 1
+                    if success_counter > 40:
+                        return
 
             video_writer.close()
             env.close()
@@ -1058,7 +1081,7 @@ def record_tf_policy():
                     camera_widths=1024,
                     camera_heights=1024,
                 )
-                name = "LiftBlocks"
+                name = "LiftBlock"
 
             elif choice == 3:
 
@@ -1445,7 +1468,7 @@ def record_tf_policy():
                     camera_widths=1024,
                     camera_heights=1024,
                 )
-                name = "LiftBlocks"
+                name = "LiftBlock"
 
             elif choice == 3:
 
@@ -1787,9 +1810,15 @@ def record_tf_policy():
                 data = snapshotter.load('Sawyer/data/local/experiment/ml_rl2_ppo')
             policy = data['algo'].policy
             obs_dict = env.reset()  # Initial observation
+
+            if screenshot_mode:
+                screenshot = obs_dict["frontview_image"]
+                plt.imsave("{}.png".format(name), screenshot)
+
             obs = flatten_obs(obs_dict, env, False)
             obs = np.concatenate([obs, np.zeros(8), [0], [0]])
             policy.reset()
+            success_counter = 0
 
             for steps in range(horizon):
                 action, _ = policy.get_action(obs)
@@ -1811,6 +1840,11 @@ def record_tf_policy():
                 else:
                     obs = np.concatenate([obs, action, [reward], [1]])
 
+                if info['success']:
+                    success_counter += 1
+                    if success_counter > 40:
+                        return
+
             video_writer.close()
             env.close()
 
@@ -1819,4 +1853,4 @@ def record_tf_policy():
 
 
 if __name__ == "__main__":
-    record_tf_policy()
+    record_tf_policy(screenshot_mode=True)

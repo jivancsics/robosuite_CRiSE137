@@ -123,6 +123,9 @@ def flatten_obs(obs_dict, env, single_task_ml, verbose=False):
 
 
 def record_torch_policy():
+    """
+    Function for recording the resulting interactions of a Pytorch-based policy (MAML) with the environment.
+    """
 
     horizon = 500
 
@@ -221,7 +224,7 @@ def record_torch_policy():
                         camera_widths=1024,
                         camera_heights=1024,
                     )
-                    name = "LiftBlocks"
+                    name = "LiftBlock"
 
                 elif choice == 3:
 
@@ -608,7 +611,7 @@ def record_torch_policy():
                         camera_widths=1024,
                         camera_heights=1024,
                     )
-                    name = "LiftBlocks"
+                    name = "LiftBlock"
 
                 elif choice == 3:
 
@@ -953,6 +956,7 @@ def record_torch_policy():
             obs_dict = env.reset()  # Initial observation
             obs = flatten_obs(obs_dict, env, True)
             policy.reset()
+            success_counter = 0
 
             for steps in range(horizon):
                 action, _ = policy.get_action(obs)
@@ -966,6 +970,11 @@ def record_torch_policy():
                 # Use modified flatten_obs() to delete the camera observations and reorder/flatten
                 # the obs array correctly
                 obs = flatten_obs(obs_dict, env, True)
+
+                if info['success']:
+                    success_counter += 1
+                    if success_counter > 40:
+                        return
 
             video_writer.close()
             env.close()
@@ -1059,7 +1068,7 @@ def record_torch_policy():
                         camera_widths=1024,
                         camera_heights=1024,
                     )
-                    name = "LiftBlocks"
+                    name = "LiftBlock"
 
                 elif choice == 3:
 
@@ -1446,7 +1455,7 @@ def record_torch_policy():
                         camera_widths=1024,
                         camera_heights=1024,
                     )
-                    name = "LiftBlocks"
+                    name = "LiftBlock"
 
                 elif choice == 3:
 
@@ -1790,6 +1799,7 @@ def record_torch_policy():
             obs_dict = env.reset()  # Initial observation
             obs = flatten_obs(obs_dict, env, False)
             policy.reset()
+            success_counter = 0
 
             for steps in range(horizon):
                 action, _ = policy.get_action(obs)
@@ -1803,6 +1813,11 @@ def record_torch_policy():
                 # Use modified flatten_obs() to delete the camera observations and reorder/flatten
                 # the obs array correctly
                 obs = flatten_obs(obs_dict, env, False)
+
+                if info['success']:
+                    success_counter += 1
+                    if success_counter > 40:
+                        return
 
             video_writer.close()
             env.close()
