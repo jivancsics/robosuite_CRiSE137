@@ -71,12 +71,12 @@ def _make_tasks(classes, args_kwargs, seed=None, single_task_ml=False):
         del kwargs["task_id"]
         for _ in range(_N_GOALS):
             if env_name == "nut-assembly-mixed":
-                y_pos_square = np.random.uniform(low=0.10, high=0.225)
+                y_pos_square = np.random.uniform(low=0.12, high=0.225)
                 x_pos_square = np.random.uniform(low=-0.13, high=-0.10)
-                rot_square = np.random.uniform(low=0, high=np.pi / 4.0)
-                y_pos_round = np.random.uniform(low=-0.225, high=-0.10)
+                rot_square = np.random.uniform(low=0, high=2.0 * np.pi)
+                y_pos_round = np.random.uniform(low=-0.225, high=-0.12)
                 x_pos_round = np.random.uniform(low=-0.13, high=-0.10)
-                rot_round = np.random.uniform(low=0, high=np.pi / 2.0)
+                rot_round = np.random.uniform(low=0, high=2.0 * np.pi)
                 rand_vecs.append([x_pos_square, y_pos_square, rot_square, x_pos_round, y_pos_round, rot_round])
             elif env_name == "nut-assembly-square":
                 y_pos_square = np.random.uniform(low=0.10, high=0.225)
