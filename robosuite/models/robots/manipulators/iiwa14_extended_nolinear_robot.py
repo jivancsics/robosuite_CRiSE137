@@ -25,6 +25,8 @@ class IIWA14_extended_nolinear(ManipulatorModel):
 
     @property
     def default_controller_config(self):
+        # return "osc_position_iiwa"
+        # return "osc_pose_iiwa"
         return "default_iiwa"
 
     @property
