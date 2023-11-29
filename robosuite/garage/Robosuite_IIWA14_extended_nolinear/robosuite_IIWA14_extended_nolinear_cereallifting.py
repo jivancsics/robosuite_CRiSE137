@@ -5,9 +5,9 @@ from robosuite.utils.placement_samplers import UniformRandomSampler
 import numpy as np
 
 
-class SawyerBlockliftingRobosuiteEnv:
+class IIWA14CerealliftingRobosuiteEnv:
     """
-    This class encapsulates the block lifting task of Robosuite and shall serve the similar behaviour of MetaWorld
+    This class encapsulates the cereal lifting task of Robosuite and shall serve the similar behaviour of MetaWorld
     environments after instantiation via metaworld.ML10().
 
     Args:
@@ -52,7 +52,7 @@ class SawyerBlockliftingRobosuiteEnv:
 
         use_camera_obs (bool): if True, every observation includes rendered image(s)
 
-        use_object_obs (bool): if True, include object (cube) information in
+        use_object_obs (bool): if True, include object (cereal) information in
             the observation.
 
         reward_scale (None or float): Scales the normalized reward function by the amount specified.
@@ -129,7 +129,7 @@ class SawyerBlockliftingRobosuiteEnv:
         self.use_camera_obs = False
         self.has_offscreen_renderer = False
         self.has_renderer = False
-        self.reward_shaping = True  # use dense rewards --> MetaWorld also judges moves more frequently
+        self.reward_shaping = True
         self.control_freq = 20
         self.horizon = 500  # max episode length
         self.env_configuration = "default"
@@ -188,8 +188,8 @@ class SawyerBlockliftingRobosuiteEnv:
     def __call__(self):
         return GymWrapper(
             suite.make(
-                "Lift",
-                robots="Sawyer",
+                "LiftCereal",
+                robots="IIWA14_extended_nolinear",
                 use_camera_obs=self.use_camera_obs,
                 has_offscreen_renderer=self.has_offscreen_renderer,
                 has_renderer=self.has_renderer,

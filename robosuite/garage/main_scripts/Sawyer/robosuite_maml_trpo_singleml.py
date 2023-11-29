@@ -14,8 +14,8 @@ import torch
 
 @wrap_experiment(snapshot_mode='gap', snapshot_gap=5)
 def singleml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
-    """Function which sets up and starts a MAML based single task Meta Learning experiment on the
-    Robosuite benchmark. This experiment resembles the ML1 experiment in MetaWorld. Robot used: Rethink Robotics Sawyer
+    """Function which sets up and starts the MAML based single task Meta Learning experiment Meta 1 on the
+    Robosuite benchmark. This experiment resembles the ML1 experiment in MetaWorld. Robot used: Rethink Robotics Sawyer.
 
     Arguments:
         ctxt: Experiment context configuration from the wrap_experiment wrapper, used by Trainer class

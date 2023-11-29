@@ -15,8 +15,9 @@ from garage.torch import set_gpu_mode
 
 @wrap_experiment(snapshot_mode='gap', snapshot_gap=5)
 def ml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
-    """Function which sets up and starts a MAML based Meta Learning experiment on the Robosuite benchmark.
-    This experiment resembles the ML10 experiment in MetaWorld. Robot used: Rethink Robotics Sawyer
+    """Function which sets up and starts the MAML based Meta Learning experiment Meta 7 on the Robosuite benchmark.
+    This experiment resembles the ML10 experiment in MetaWorld. Robot used: IIWA14 with locked linear axes.
+
 
     Arguments:
         ctxt: Experiment context configuration from the wrap_experiment wrapper, used by Trainer class
@@ -27,10 +28,10 @@ def ml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """
     # Set up the environment
     set_seed(seed)
-    ml = IIWA14MLRobosuite()
-    all_ml_train_subtasks = RobosuiteTaskSampler(ml, 'train')
+    meta7 = IIWA14MLRobosuite()
+    all_ml_train_subtasks = RobosuiteTaskSampler(meta7, 'train')
     sampled_subtasks = all_ml_train_subtasks.sample(meta_batch_size)  # 14 subtasks overall = 2 task per class
-    all_ml_test_subtasks = RobosuiteTaskSampler(ml, 'test')
+    all_ml_test_subtasks = RobosuiteTaskSampler(meta7, 'test')
     env = sampled_subtasks[0]()
     # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml, 'test'))
 

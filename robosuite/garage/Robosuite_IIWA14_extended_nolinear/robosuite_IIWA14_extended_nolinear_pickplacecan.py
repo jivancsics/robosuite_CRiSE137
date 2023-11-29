@@ -9,8 +9,8 @@ class IIWA14PickplacecanRobosuiteEnv:
     behaviour of MetaWorld environments after instantiation via metaworld.ML10().
 
     Args:
-        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task meta RL learning or
-        in a general ML setting with multiple diverse tasks.
+        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task meta RL (Meta 1/Meta 3) or
+        in a general ML setting with multiple diverse tasks (Meta 7).
 
     Class variables (inherited from args in robosuite/environments/manipulation/pick_place.py):
         robots (str or list of str): Specification for specific robot arm(s) to be instantiated within this env

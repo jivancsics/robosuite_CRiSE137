@@ -16,8 +16,9 @@ from garage.torch import set_gpu_mode
 
 @wrap_experiment(snapshot_mode='gap', snapshot_gap=10)
 def singleml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
-    """Function which sets up and starts an RL2 based single task Meta Learning experiment on the
+    """Function which sets up and starts the RL2 based single task Meta Learning experiment Meta 1 on the
     Robosuite benchmark. This experiment resembles the ML1 experiment in MetaWorld.
+    Robot used: IIWA14 with locked linear axes.
 
     Arguments:
         ctxt: Experiment context configuration from the wrap_experiment wrapper, used by Trainer class
@@ -28,9 +29,9 @@ def singleml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """
     # Set up the environment
     set_seed(seed)
-    ml1 = IIWA14SingleMLRobosuite('blocklifting')
-    all_train_subtasks = RobosuiteTaskSampler(ml1, 'train', lambda env, _: RL2Env(env))
-    all_test_subtasks = RobosuiteTaskSampler(ml1, 'test', lambda env, _: RL2Env(env))
+    meta1 = IIWA14SingleMLRobosuite('canlifting')
+    all_train_subtasks = RobosuiteTaskSampler(meta1, 'train', lambda env, _: RL2Env(env))
+    all_test_subtasks = RobosuiteTaskSampler(meta1, 'test', lambda env, _: RL2Env(env))
     tasks = all_train_subtasks.sample(meta_batch_size)
     env = tasks[0]()
     # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml1, 'test'))

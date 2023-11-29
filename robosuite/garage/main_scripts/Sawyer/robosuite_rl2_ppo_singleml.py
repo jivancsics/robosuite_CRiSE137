@@ -16,8 +16,8 @@ from garage.torch import set_gpu_mode
 
 @wrap_experiment(snapshot_mode='gap', snapshot_gap=10)
 def singleml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
-    """Function which sets up and starts an RL2 based single task Meta Learning experiment on the
-    Robosuite benchmark. This experiment resembles the ML1 experiment in MetaWorld.
+    """Function which sets up and starts the RL2 based single task Meta Learning experiment Meta 1 on the
+    Robosuite benchmark. This experiment resembles the ML1 experiment in MetaWorld. Robot used: Rethink Robotics Sawyer.
 
     Arguments:
         ctxt: Experiment context configuration from the wrap_experiment wrapper, used by Trainer class

@@ -88,10 +88,15 @@ def _make_tasks(classes, args_kwargs, seed=None, single_task_ml=False):
                 x_pos_round = np.random.uniform(low=-0.13, high=-0.10)
                 rot_round = np.random.uniform(low=0, high=np.pi / 2.0)
                 rand_vecs.append([x_pos_round, y_pos_round, rot_round])
-            elif env_name == "blocklifting":
+            elif env_name in ("blocklifting", "canlifting"):
                 x_pos = np.random.uniform(low=-0.30, high=0.30)
                 y_pos = np.random.uniform(low=-0.30, high=0.30)
                 rot = np.random.uniform(low=0, high=np.pi / 4.0)
+                rand_vecs.append([x_pos, y_pos, rot])
+            elif env_name in ("cereallifting", "breadlifting", "lemonlifting"):
+                x_pos = np.random.uniform(low=-0.30, high=0.30)
+                y_pos = np.random.uniform(low=-0.30, high=0.30)
+                rot = np.random.uniform(low=0, high=np.pi)
                 rand_vecs.append([x_pos, y_pos, rot])
             elif env_name == "stack-blocks":
                 x_pos_a = np.random.uniform(low=-0.30, high=0.30)
@@ -185,6 +190,8 @@ def _iiwa14_singleml_env_names():
     return tasks
 
 
+# Set up the Meta 7 experiment on the Sawyer robot
+
 class SawyerMLRobosuite(Benchmark):
     def __init__(self, seed=None):
         super().__init__()
@@ -199,6 +206,24 @@ class SawyerMLRobosuite(Benchmark):
             self._test_classes, test_kwargs, seed=seed
         )
 
+# Set up the Meta 3 experiment on the Sawyer robot
+
+class SawyerMeta3Robosuite(Benchmark):
+    def __init__(self, seed=None):
+        super().__init__()
+        self._train_classes = _env_dict.ROBOSUITEMETA3_SAWYER["train"]
+        self._test_classes = _env_dict.ROBOSUITEMETA3_SAWYER["test"]
+        train_kwargs = _env_dict.robosuitemeta3_sawyer_train_args_kwargs
+        self._train_tasks = _make_tasks(
+            self._train_classes, train_kwargs, seed=seed
+        )
+        test_kwargs = _env_dict.robosuitemeta3_sawyer_test_args_kwargs
+        self._test_tasks = _make_tasks(
+            self._test_classes, test_kwargs, seed=seed
+        )
+
+
+# Set up the appropriate Meta 1 experiment on the Sawyer robot
 
 class SawyerSingleMLRobosuite(Benchmark):
     ENV_NAMES = _sawyer_singleml_env_names()
@@ -206,12 +231,12 @@ class SawyerSingleMLRobosuite(Benchmark):
     def __init__(self, env_name, seed=None):
         super().__init__()
         if env_name not in _env_dict.ALL_ROBOSUITE_SINGLE_ML_TASK_SAWYER_ENVIRONMENTS:
-            raise ValueError(f"{env_name} is not a Robosuite ML environment")
+            raise ValueError(f"{env_name} is not a Robosuite Meta1 environment")
         cls = _env_dict.ALL_ROBOSUITE_SINGLE_ML_TASK_SAWYER_ENVIRONMENTS[env_name]
         self._train_classes = OrderedDict([(env_name, cls)])
         self._test_classes = self._train_classes
         self._train_ = OrderedDict([(env_name, cls)])
-        args_kwargs = _env_dict.ML1_SAWYER_args_kwargs[env_name]
+        args_kwargs = _env_dict.Meta1_SAWYER_args_kwargs[env_name]
 
         # Make sure that train tasks and test tasks are not the same
         # Use the built in functionality of _make_tasks to fulfill this requirement
@@ -220,6 +245,8 @@ class SawyerSingleMLRobosuite(Benchmark):
         self._test_tasks = self._train_tasks[50:100]
         del self._train_tasks[50:100]
 
+
+# Set up the Meta 7 experiment on the IIWA14 robot
 
 class IIWA14MLRobosuite(Benchmark):
     def __init__(self, seed=None):
@@ -236,18 +263,37 @@ class IIWA14MLRobosuite(Benchmark):
         )
 
 
+# Set up the Meta 3 experiment on the IIWA14 robot
+
+class IIWA14Meta3Robosuite(Benchmark):
+    def __init__(self, seed=None):
+        super().__init__()
+        self._train_classes = _env_dict.ROBOSUITEMETA3_IIWA14["train"]
+        self._test_classes = _env_dict.ROBOSUITEMETA3_IIWA14["test"]
+        train_kwargs = _env_dict.robosuitemeta3_iiwa14_train_args_kwargs
+        self._train_tasks = _make_tasks(
+            self._train_classes, train_kwargs, seed=seed
+        )
+        test_kwargs = _env_dict.robosuitemeta3_iiwa14_test_args_kwargs
+        self._test_tasks = _make_tasks(
+            self._test_classes, test_kwargs, seed=seed
+        )
+
+
+# Set up the appropriate Meta 1 experiment on the IIWA14 robot
+
 class IIWA14SingleMLRobosuite(Benchmark):
     ENV_NAMES = _iiwa14_singleml_env_names()
 
     def __init__(self, env_name, seed=None):
         super().__init__()
         if env_name not in _env_dict.ALL_ROBOSUITE_SINGLE_ML_TASK_IIWA14_ENVIRONMENTS:
-            raise ValueError(f"{env_name} is not a Robosuite ML environment")
+            raise ValueError(f"{env_name} is not a Robosuite Meta1 environment")
         cls = _env_dict.ALL_ROBOSUITE_SINGLE_ML_TASK_IIWA14_ENVIRONMENTS[env_name]
         self._train_classes = OrderedDict([(env_name, cls)])
         self._test_classes = self._train_classes
         self._train_ = OrderedDict([(env_name, cls)])
-        args_kwargs = _env_dict.ML1_IIWA14_args_kwargs[env_name]
+        args_kwargs = _env_dict.Meta1_IIWA14_args_kwargs[env_name]
 
         # Make sure that train tasks and test tasks are not the same
         # Use the built in functionality of _make_tasks to fulfill this requirement
@@ -257,4 +303,5 @@ class IIWA14SingleMLRobosuite(Benchmark):
         del self._train_tasks[50:100]
 
 
-__all__ = ["SawyerMLRobosuite", "SawyerSingleMLRobosuite", "IIWA14MLRobosuite", "IIWA14SingleMLRobosuite"]
+__all__ = ["SawyerMLRobosuite", "SawyerMeta3Robosuite", "SawyerSingleMLRobosuite", "IIWA14MLRobosuite",
+           "IIWA14Meta3Robosuite", "IIWA14SingleMLRobosuite"]

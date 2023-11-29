@@ -13,6 +13,9 @@ from robosuite.utils.placement_samplers import UniformRandomSampler, SequentialC
 from robosuite.models.objects import BoxObject
 from robosuite.utils.mjcf_utils import CustomMaterial
 from matplotlib import pyplot as plt
+import os
+
+os.environ["IMAGEIO_FFMPEG_EXE"] = "ffmpeg"
 
 # Setting image convention to OpenCV to make sure that the recorded video has a correct orientation
 macros.IMAGE_CONVENTION = "opencv"
@@ -968,7 +971,7 @@ def record_tf_policy(screenshot_mode=False):
                 plt.imsave("{}.png".format(name), screenshot)
 
             obs = flatten_obs(obs_dict, env, True)
-            obs = np.concatenate([obs, np.zeros(8), [0], [0]])
+            obs = np.concatenate([obs, np.zeros(env.action_dim), [0], [0]])
             policy.reset()
             success_counter = 0
 
@@ -1816,7 +1819,7 @@ def record_tf_policy(screenshot_mode=False):
                 plt.imsave("{}.png".format(name), screenshot)
 
             obs = flatten_obs(obs_dict, env, False)
-            obs = np.concatenate([obs, np.zeros(8), [0], [0]])
+            obs = np.concatenate([obs, np.zeros(env.action_dim), [0], [0]])
             policy.reset()
             success_counter = 0
 

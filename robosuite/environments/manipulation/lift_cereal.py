@@ -4,17 +4,16 @@ import numpy as np
 
 from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
 from robosuite.models.arenas import TableArena
-from robosuite.models.objects import CanObject
+from robosuite.models.objects import CerealObject
 from robosuite.models.tasks import ManipulationTask
-from robosuite.utils.mjcf_utils import CustomMaterial
 from robosuite.utils.observables import Observable, sensor
 from robosuite.utils.placement_samplers import UniformRandomSampler
 from robosuite.utils.transform_utils import convert_quat
 
 
-class LiftCan(SingleArmEnv):
+class LiftCereal(SingleArmEnv):
     """
-    This class corresponds to the can lifting task for a single robot arm.
+    This class corresponds to the cereal lifting task for a single robot arm.
 
     Args:
         robots (str or list of str): Specification for specific robot arm(s) to be instantiated within this env
@@ -57,7 +56,7 @@ class LiftCan(SingleArmEnv):
 
         use_camera_obs (bool): if True, every observation includes rendered image(s)
 
-        use_object_obs (bool): if True, include object (can) information in
+        use_object_obs (bool): if True, include object (cereal) information in
             the observation.
 
         reward_scale (None or float): Scales the normalized reward function by the amount specified.
@@ -244,14 +243,14 @@ class LiftCan(SingleArmEnv):
         elif self.reward_shaping:
 
             # reaching reward
-            can_pos = self.sim.data.body_xpos[self.can_body_id]
+            cereal_pos = self.sim.data.body_xpos[self.cereal_body_id]
             gripper_site_pos = self.sim.data.site_xpos[self.robots[0].eef_site_id]
-            dist = np.linalg.norm(gripper_site_pos - can_pos)
+            dist = np.linalg.norm(gripper_site_pos - cereal_pos)
             reaching_reward = 1 - np.tanh(10.0 * dist)
             reward += reaching_reward
 
             # grasping reward
-            if self._check_grasp(gripper=self.robots[0].gripper, object_geoms=self.can):
+            if self._check_grasp(gripper=self.robots[0].gripper, object_geoms=self.cereal):
                 reward += 0.25
 
         # Scale reward if requested
@@ -281,18 +280,18 @@ class LiftCan(SingleArmEnv):
         mujoco_arena.set_origin([0, 0, 0])
 
         # initialize object of interest
-        self.can = CanObject(
-            name="can"
+        self.cereal = CerealObject(
+            name="cereal"
         )
 
         # Create placement initializer
         if self.placement_initializer is not None:
             self.placement_initializer.reset()
-            self.placement_initializer.add_objects(self.can)
+            self.placement_initializer.add_objects(self.cereal)
         else:
             self.placement_initializer = UniformRandomSampler(
                 name="ObjectSampler",
-                mujoco_objects=self.can,
+                mujoco_objects=self.cereal,
                 x_range=[-0.03, 0.03],
                 y_range=[-0.03, 0.03],
                 rotation=None,
@@ -306,7 +305,7 @@ class LiftCan(SingleArmEnv):
         self.model = ManipulationTask(
             mujoco_arena=mujoco_arena,
             mujoco_robots=[robot.robot_model for robot in self.robots],
-            mujoco_objects=self.can,
+            mujoco_objects=self.cereal,
         )
 
     def _setup_references(self):
@@ -318,7 +317,7 @@ class LiftCan(SingleArmEnv):
         super()._setup_references()
 
         # Additional object references from this env
-        self.can_body_id = self.sim.model.body_name2id(self.can.root_body)
+        self.cereal_body_id = self.sim.model.body_name2id(self.cereal.root_body)
 
     def _setup_observables(self):
         """
@@ -335,24 +334,24 @@ class LiftCan(SingleArmEnv):
             pf = self.robots[0].robot_model.naming_prefix
             modality = "object"
 
-            # can-related observables
+            # cereal-related observables
             @sensor(modality=modality)
-            def can_pos(obs_cache):
-                return np.array(self.sim.data.body_xpos[self.can_body_id])
+            def cereal_pos(obs_cache):
+                return np.array(self.sim.data.body_xpos[self.cereal_body_id])
 
             @sensor(modality=modality)
-            def can_quat(obs_cache):
-                return convert_quat(np.array(self.sim.data.body_xquat[self.can_body_id]), to="xyzw")
+            def cereal_quat(obs_cache):
+                return convert_quat(np.array(self.sim.data.body_xquat[self.cereal_body_id]), to="xyzw")
 
             @sensor(modality=modality)
-            def gripper_to_can_pos(obs_cache):
+            def gripper_to_cereal_pos(obs_cache):
                 return (
-                    obs_cache[f"{pf}eef_pos"] - obs_cache["can_pos"]
-                    if f"{pf}eef_pos" in obs_cache and "can_pos" in obs_cache
+                    obs_cache[f"{pf}eef_pos"] - obs_cache["cereal_pos"]
+                    if f"{pf}eef_pos" in obs_cache and "cereal_pos" in obs_cache
                     else np.zeros(3)
                 )
 
-            sensors = [can_pos, can_quat, gripper_to_can_pos]
+            sensors = [cereal_pos, cereal_quat, gripper_to_cereal_pos]
             names = [s.__name__ for s in sensors]
 
             # Create observables
@@ -395,7 +394,7 @@ class LiftCan(SingleArmEnv):
 
         # Color the gripper visualization site according to its distance to the cube
         if vis_settings["grippers"]:
-            self._visualize_gripper_to_target(gripper=self.robots[0].gripper, target=self.can)
+            self._visualize_gripper_to_target(gripper=self.robots[0].gripper, target=self.cereal)
 
     def _check_success(self):
         """
@@ -404,11 +403,11 @@ class LiftCan(SingleArmEnv):
         Returns:
             bool: True if can has been lifted
         """
-        can_height = self.sim.data.body_xpos[self.can_body_id][2]
+        cereal_height = self.sim.data.body_xpos[self.cereal_body_id][2]
         table_height = self.model.mujoco_arena.table_offset[2]
 
         # can is higher than the table top above a margin
-        return can_height > table_height + 0.15
+        return cereal_height > table_height + 0.2
 
     def _post_action(self, action):
         """

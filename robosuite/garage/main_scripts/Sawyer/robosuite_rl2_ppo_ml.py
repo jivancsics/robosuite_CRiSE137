@@ -1,23 +1,24 @@
 import argparse
-from garage import wrap_experiment
-from garage.experiment.deterministic import set_seed
-from robosuite.garage.robosuiteml_set_task_env import RobosuiteMLSetTaskEnv
-from garage.experiment import MetaEvaluator
-from robosuite.garage.robosuite_task_sampler import RobosuiteTaskSampler, SetTaskSampler
-from robosuite.garage.ml_robosuite import SawyerMLRobosuite
-from garage.sampler import RaySampler, LocalSampler
-from garage.tf.algos import RL2PPO
-from garage.tf.policies import GaussianGRUPolicy
-from garage.np.baselines import LinearFeatureBaseline
-from garage.trainer import TFTrainer
-from garage.tf.algos.rl2 import RL2Env, RL2Worker
+
 import tensorflow as tf
-from garage.torch import set_gpu_mode
+
+from garage import wrap_experiment
+from garage.experiment import MetaEvaluator
+from garage.experiment.deterministic import set_seed
+from garage.np.baselines import LinearFeatureBaseline
+from garage.sampler import LocalSampler
+from garage.tf.algos import RL2PPO
+from garage.tf.algos.rl2 import RL2Env, RL2Worker
+from garage.tf.policies import GaussianGRUPolicy
+from garage.trainer import TFTrainer
+from robosuite.garage.ml_robosuite import SawyerMLRobosuite
+from robosuite.garage.robosuite_task_sampler import RobosuiteTaskSampler
+
 
 @wrap_experiment(snapshot_mode='gap', snapshot_gap=10)
 def ml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
-    """Function which sets up and starts an RL2 based Meta Learning experiment on the Robosuite benchmark.
-    This experiment resembles the ML10 experiment in MetaWorld.
+    """Function which sets up and starts the RL2 based Meta Learning experiment Meta 7 on the Robosuite benchmark.
+    This experiment resembles the ML10 experiment in MetaWorld. Robot used: Rethink Robotics Sawyer.
 
     Arguments:
         ctxt: Experiment context configuration from the wrap_experiment wrapper, used by Trainer class
