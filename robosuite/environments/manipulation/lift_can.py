@@ -237,7 +237,8 @@ class LiftCan(SingleArmEnv):
 
         # sparse completion reward
         if self._check_success():
-            reward = 2.25
+            # reward = 2.25
+            reward = 3.0
             success = True
 
         # use a shaping reward
@@ -252,11 +253,13 @@ class LiftCan(SingleArmEnv):
 
             # grasping reward
             if self._check_grasp(gripper=self.robots[0].gripper, object_geoms=self.can):
-                reward += 0.25
+                # reward += 0.25
+                reward += 1.0
 
         # Scale reward if requested
         if self.reward_scale is not None:
-            reward *= self.reward_scale / 2.25
+            # reward *= self.reward_scale / 2.25
+            reward *= self.reward_scale / 3.0
 
         return reward, success
 

@@ -88,7 +88,7 @@ def _make_tasks(classes, args_kwargs, seed=None, single_task_ml=False):
                 x_pos_round = np.random.uniform(low=-0.13, high=-0.10)
                 rot_round = np.random.uniform(low=0, high=np.pi / 2.0)
                 rand_vecs.append([x_pos_round, y_pos_round, rot_round])
-            elif env_name in ("blocklifting", "canlifting"):
+            elif env_name in ("blocklifting", "blockliftingMeta3", "canlifting"):
                 x_pos = np.random.uniform(low=-0.30, high=0.30)
                 y_pos = np.random.uniform(low=-0.30, high=0.30)
                 rot = np.random.uniform(low=0, high=np.pi / 4.0)
