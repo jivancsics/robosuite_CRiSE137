@@ -401,16 +401,16 @@ class LiftLemon(SingleArmEnv):
 
     def _check_success(self):
         """
-        Check if can has been lifted.
+        Check if lemon has been lifted.
 
         Returns:
-            bool: True if can has been lifted
+            bool: True if lemon has been lifted
         """
         lemon_height = self.sim.data.body_xpos[self.lemon_body_id][2]
         table_height = self.model.mujoco_arena.table_offset[2]
 
         # can is higher than the table top above a margin
-        return lemon_height > table_height + 0.8
+        return lemon_height > table_height + 0.3
 
     def _post_action(self, action):
         """

@@ -401,10 +401,10 @@ class LiftCereal(SingleArmEnv):
 
     def _check_success(self):
         """
-        Check if can has been lifted.
+        Check if cereal has been lifted.
 
         Returns:
-            bool: True if can has been lifted
+            bool: True if cereal has been lifted
         """
         cereal_height = self.sim.data.body_xpos[self.cereal_body_id][2]
         table_height = self.model.mujoco_arena.table_offset[2]

@@ -19,6 +19,7 @@ from robosuite.environments.manipulation.lift_bread import LiftBread
 from robosuite.environments.manipulation.lift_cereal import LiftCereal
 from robosuite.environments.manipulation.lift_lemon import LiftLemon
 from robosuite.environments.manipulation.lift_meta3 import LiftMeta3
+from robosuite.environments.manipulation.lift_bottle import LiftBottle
 
 from robosuite.environments import ALL_ENVIRONMENTS
 from robosuite.controllers import ALL_CONTROLLERS, load_controller_config

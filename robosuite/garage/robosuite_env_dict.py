@@ -28,6 +28,7 @@ from robosuite.garage.Robosuite_Sawyer.robosuite_sawyer_cereallifting import Saw
 from robosuite.garage.Robosuite_Sawyer.robosuite_sawyer_breadlifting import SawyerBreadliftingRobosuiteEnv
 from robosuite.garage.Robosuite_Sawyer.robosuite_sawyer_lemonlifting import SawyerLemonliftingRobosuiteEnv
 from robosuite.garage.Robosuite_Sawyer.robosuite_sawyer_blockliftingMeta3 import SawyerBlockliftingMeta3RobosuiteEnv
+from robosuite.garage.Robosuite_Sawyer.robosuite_sawyer_bottlelifting import SawyerBottleliftingRobosuiteEnv
 
 from robosuite.garage.Robosuite_IIWA14_extended_nolinear.robosuite_IIWA14_extended_nolinear_pickplacebread import (
     IIWA14PickplacebreadRobosuiteEnv)
@@ -59,6 +60,8 @@ from robosuite.garage.Robosuite_IIWA14_extended_nolinear.robosuite_IIWA14_extend
     IIWA14LemonliftingRobosuiteEnv)
 from robosuite.garage.Robosuite_IIWA14_extended_nolinear.robosuite_IIWA14_extended_nolinear_blockliftingMeta3 import (
     IIWA14BlockliftingMeta3RobosuiteEnv)
+from robosuite.garage.Robosuite_IIWA14_extended_nolinear.robosuite_IIWA14_extended_nolinear_bottlelifting import (
+    IIWA14BottleliftingRobosuiteEnv)
 
 """
 Exclude wipe task due to the different action space (no gripper used here).
@@ -91,6 +94,7 @@ ALL_ROBOSUITE_SAWYER_ENVIRONMENTS = OrderedDict(
         ("breadlifting", SawyerBreadliftingRobosuiteEnv()),
         ("lemonlifting", SawyerLemonliftingRobosuiteEnv()),
         ("blockliftingMeta3", SawyerBlockliftingMeta3RobosuiteEnv()),
+        ("bottlelifting", SawyerBottleliftingRobosuiteEnv()),
 
         # Defined but unused environments
         # -------------------------------
@@ -120,6 +124,7 @@ ALL_ROBOSUITE_SINGLE_ML_TASK_SAWYER_ENVIRONMENTS = OrderedDict(
         ("breadlifting", SawyerBreadliftingRobosuiteEnv(single_task_ml=True)),
         ("lemonlifting", SawyerLemonliftingRobosuiteEnv(single_task_ml=True)),
         ("blockliftingMeta3", SawyerBlockliftingMeta3RobosuiteEnv(single_task_ml=True)),
+        ("bottlelifting", SawyerBottleliftingRobosuiteEnv(single_task_ml=True)),
     )
 )
 
@@ -243,6 +248,7 @@ ALL_ROBOSUITE_IIWA14_ENVIRONMENTS = OrderedDict(
         ("breadlifting", IIWA14BreadliftingRobosuiteEnv()),
         ("lemonlifting", IIWA14LemonliftingRobosuiteEnv()),
         ("blockliftingMeta3", IIWA14BlockliftingMeta3RobosuiteEnv()),
+        ("bottlelifting", IIWA14BottleliftingRobosuiteEnv()),
 
         # Defined but unused environments
         # -------------------------------
@@ -272,6 +278,7 @@ ALL_ROBOSUITE_SINGLE_ML_TASK_IIWA14_ENVIRONMENTS = OrderedDict(
         ("breadlifting", IIWA14BreadliftingRobosuiteEnv(single_task_ml=True)),
         ("lemonlifting", IIWA14LemonliftingRobosuiteEnv(single_task_ml=True)),
         ("blockliftingMeta3", IIWA14BlockliftingMeta3RobosuiteEnv(single_task_ml=True)),
+        ("bottlelifting", IIWA14BottleliftingRobosuiteEnv(single_task_ml=True)),
     )
 )
 

@@ -4,16 +4,16 @@ import numpy as np
 
 from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
 from robosuite.models.arenas import TableArena
-from robosuite.models.objects import BreadObject
+from robosuite.models.objects import BottleObject
 from robosuite.models.tasks import ManipulationTask
 from robosuite.utils.observables import Observable, sensor
 from robosuite.utils.placement_samplers import UniformRandomSampler
 from robosuite.utils.transform_utils import convert_quat
 
 
-class LiftBread(SingleArmEnv):
+class LiftBottle(SingleArmEnv):
     """
-    This class corresponds to the bread lifting task for a single robot arm.
+    This class corresponds to the bottle lifting task for a single robot arm.
 
     Args:
         robots (str or list of str): Specification for specific robot arm(s) to be instantiated within this env
@@ -56,7 +56,7 @@ class LiftBread(SingleArmEnv):
 
         use_camera_obs (bool): if True, every observation includes rendered image(s)
 
-        use_object_obs (bool): if True, include object (bread) information in
+        use_object_obs (bool): if True, include object (bottle) information in
             the observation.
 
         reward_scale (None or float): Scales the normalized reward function by the amount specified.
@@ -244,14 +244,14 @@ class LiftBread(SingleArmEnv):
         elif self.reward_shaping:
 
             # reaching reward
-            bread_pos = self.sim.data.body_xpos[self.bread_body_id]
+            bottle_pos = self.sim.data.body_xpos[self.bottle_body_id]
             gripper_site_pos = self.sim.data.site_xpos[self.robots[0].eef_site_id]
-            dist = np.linalg.norm(gripper_site_pos - bread_pos)
+            dist = np.linalg.norm(gripper_site_pos - bottle_pos)
             reaching_reward = 1 - np.tanh(10.0 * dist)
             reward += reaching_reward
 
             # grasping reward
-            if self._check_grasp(gripper=self.robots[0].gripper, object_geoms=self.bread):
+            if self._check_grasp(gripper=self.robots[0].gripper, object_geoms=self.bottle):
                 # reward += 0.25
                 reward += 1.0
 
@@ -283,18 +283,18 @@ class LiftBread(SingleArmEnv):
         mujoco_arena.set_origin([0, 0, 0])
 
         # initialize object of interest
-        self.bread = BreadObject(
-            name="bread"
+        self.bottle = BottleObject(
+            name="Bottle"
         )
 
         # Create placement initializer
         if self.placement_initializer is not None:
             self.placement_initializer.reset()
-            self.placement_initializer.add_objects(self.bread)
+            self.placement_initializer.add_objects(self.bottle)
         else:
             self.placement_initializer = UniformRandomSampler(
                 name="ObjectSampler",
-                mujoco_objects=self.bread,
+                mujoco_objects=self.bottle,
                 x_range=[-0.03, 0.03],
                 y_range=[-0.03, 0.03],
                 rotation=None,
@@ -308,7 +308,7 @@ class LiftBread(SingleArmEnv):
         self.model = ManipulationTask(
             mujoco_arena=mujoco_arena,
             mujoco_robots=[robot.robot_model for robot in self.robots],
-            mujoco_objects=self.bread,
+            mujoco_objects=self.bottle,
         )
 
     def _setup_references(self):
@@ -320,7 +320,7 @@ class LiftBread(SingleArmEnv):
         super()._setup_references()
 
         # Additional object references from this env
-        self.bread_body_id = self.sim.model.body_name2id(self.bread.root_body)
+        self.bottle_body_id = self.sim.model.body_name2id(self.bottle.root_body)
 
     def _setup_observables(self):
         """
@@ -339,22 +339,22 @@ class LiftBread(SingleArmEnv):
 
             # can-related observables
             @sensor(modality=modality)
-            def bread_pos(obs_cache):
-                return np.array(self.sim.data.body_xpos[self.bread_body_id])
+            def bottle_pos(obs_cache):
+                return np.array(self.sim.data.body_xpos[self.bottle_body_id])
 
             @sensor(modality=modality)
-            def bread_quat(obs_cache):
-                return convert_quat(np.array(self.sim.data.body_xquat[self.bread_body_id]), to="xyzw")
+            def bottle_quat(obs_cache):
+                return convert_quat(np.array(self.sim.data.body_xquat[self.bottle_body_id]), to="xyzw")
 
             @sensor(modality=modality)
-            def gripper_to_bread_pos(obs_cache):
+            def gripper_to_bottle_pos(obs_cache):
                 return (
-                    obs_cache[f"{pf}eef_pos"] - obs_cache["bread_pos"]
-                    if f"{pf}eef_pos" in obs_cache and "bread_pos" in obs_cache
+                    obs_cache[f"{pf}eef_pos"] - obs_cache["bottle_pos"]
+                    if f"{pf}eef_pos" in obs_cache and "bottle_pos" in obs_cache
                     else np.zeros(3)
                 )
 
-            sensors = [bread_pos, bread_quat, gripper_to_bread_pos]
+            sensors = [bottle_pos, bottle_quat, gripper_to_bottle_pos]
             names = [s.__name__ for s in sensors]
 
             # Create observables
@@ -397,20 +397,20 @@ class LiftBread(SingleArmEnv):
 
         # Color the gripper visualization site according to its distance to the cube
         if vis_settings["grippers"]:
-            self._visualize_gripper_to_target(gripper=self.robots[0].gripper, target=self.bread)
+            self._visualize_gripper_to_target(gripper=self.robots[0].gripper, target=self.bottle)
 
     def _check_success(self):
         """
-        Check if bread has been lifted.
+        Check if bottle has been lifted.
 
         Returns:
-            bool: True if bread has been lifted
+            bool: True if bottle has been lifted
         """
-        bread_height = self.sim.data.body_xpos[self.bread_body_id][2]
+        bottle_height = self.sim.data.body_xpos[self.bottle_body_id][2]
         table_height = self.model.mujoco_arena.table_offset[2]
 
         # can is higher than the table top above a margin
-        return bread_height > table_height + 0.1
+        return bottle_height > table_height + 0.3
 
     def _post_action(self, action):
         """
