@@ -410,7 +410,7 @@ class LiftLemon(SingleArmEnv):
         table_height = self.model.mujoco_arena.table_offset[2]
 
         # can is higher than the table top above a margin
-        return lemon_height > table_height + 0.3
+        return lemon_height > table_height + 0.2
 
     def _post_action(self, action):
         """
