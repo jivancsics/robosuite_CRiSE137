@@ -264,8 +264,11 @@ class NutAssembly(SingleArmEnv):
         Returns:
             float: reward value
         """
+        success = False
+
         # compute sparse rewards
-        self._check_success()
+        if self._check_success():
+            success = True
         reward = np.sum(self.objects_on_pegs)
 
         # add in shaped rewards
@@ -276,7 +279,7 @@ class NutAssembly(SingleArmEnv):
             reward *= self.reward_scale
             if self.single_object_mode == 0:
                 reward /= 2.0
-        return reward
+        return reward, success
 
     def staged_rewards(self):
         """
@@ -432,7 +435,7 @@ class NutAssembly(SingleArmEnv):
             self.nuts.append(nut)
             # Add this nut to the placement initializer
             if isinstance(self.placement_initializer, SequentialCompositeSampler):
-                # assumes we have two samplers so we add nuts to them
+                # assumes we have two samplers, therefore we add nuts to them
                 self.placement_initializer.add_objects_to_sampler(sampler_name=f"{nut_name}Sampler", mujoco_objects=nut)
             else:
                 # This is assumed to be a flat sampler, so we just add all nuts to this sampler
@@ -676,6 +679,25 @@ class NutAssembly(SingleArmEnv):
                 target=self.nuts[closest_nut_id].important_sites["handle"],
                 target_type="site",
             )
+
+    def _post_action(self, action):
+        """
+                Do any housekeeping after taking an action.
+                Args:
+                    action (np.array): Action to execute within the environment
+                Returns:
+                    3-tuple:
+                        - (float) reward from the environment
+                        - (bool) whether the current episode is completed or not
+                        - (dict) dict filled with success information
+        """
+        reward, success = self.reward(action)
+
+        # done if number of elapsed timesteps is greater than horizon
+        self.done = (self.timestep >= self.horizon) and not self.ignore_done
+
+        return reward, self.done, {"success": success}
+
 
 
 class NutAssemblySingle(NutAssembly):

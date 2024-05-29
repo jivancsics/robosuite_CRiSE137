@@ -13,6 +13,14 @@ from robosuite.environments.manipulation.two_arm_peg_in_hole import TwoArmPegInH
 from robosuite.environments.manipulation.two_arm_handover import TwoArmHandover
 from robosuite.environments.manipulation.kuka_linear_lift import KukaLinearLift
 
+# Self-defined environments
+from robosuite.environments.manipulation.lift_can import LiftCan
+from robosuite.environments.manipulation.lift_bread import LiftBread
+from robosuite.environments.manipulation.lift_cereal import LiftCereal
+from robosuite.environments.manipulation.lift_lemon import LiftLemon
+from robosuite.environments.manipulation.lift_meta3 import LiftMeta3
+from robosuite.environments.manipulation.lift_bottle import LiftBottle
+
 from robosuite.environments import ALL_ENVIRONMENTS
 from robosuite.controllers import ALL_CONTROLLERS, load_controller_config
 from robosuite.robots import ALL_ROBOTS

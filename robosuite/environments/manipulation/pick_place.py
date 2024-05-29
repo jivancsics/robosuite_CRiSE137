@@ -275,8 +275,11 @@ class PickPlace(SingleArmEnv):
         Returns:
             float: reward value
         """
+        success = False
+
         # compute sparse rewards
-        self._check_success()
+        if self._check_success():
+            success = True
         reward = np.sum(self.objects_in_bins)
 
         # add in shaped rewards
@@ -287,7 +290,7 @@ class PickPlace(SingleArmEnv):
             reward *= self.reward_scale
             if self.single_object_mode == 0:
                 reward /= 4.0
-        return reward
+        return reward, success
 
     def staged_rewards(self):
         """
@@ -765,6 +768,23 @@ class PickPlace(SingleArmEnv):
                 target_type="body",
             )
 
+    def _post_action(self, action):
+        """
+                Do any housekeeping after taking an action.
+                Args:
+                    action (np.array): Action to execute within the environment
+                Returns:
+                    3-tuple:
+                        - (float) reward from the environment
+                        - (bool) whether the current episode is completed or not
+                        - (dict) dict filled with success information
+        """
+        reward, success = self.reward(action)
+
+        # done if number of elapsed timesteps is greater than horizon
+        self.done = (self.timestep >= self.horizon) and not self.ignore_done
+
+        return reward, self.done, {"success": success}
 
 class PickPlaceSingle(PickPlace):
     """
