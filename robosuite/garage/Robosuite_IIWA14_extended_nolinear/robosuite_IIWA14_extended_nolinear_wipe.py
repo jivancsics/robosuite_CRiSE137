@@ -40,8 +40,12 @@ DEFAULT_WIPE_CONFIG = {
 
 class IIWA14WipeRobosuiteEnv:
     """
-    This class encapsulates the wipe task of Robosuite. The behaviour of MetaWorld environments after instantiation
-    via metaworld.ML10() shall be copied by this class.
+    This class encapsulates the Wipe task in Robosuite for CRiSE 1 while using the
+    IIWA14 robot with locked linear axes.
+
+    Args:
+        single_task_ml (bool): Always TRUE for this task due to the fact that this task does not use the default
+        IIWA14 Robotiq 2F-140 gripper (=reduced action space).
 
     Class variables (inherited from args in robosuite/environments/manipulation/wipe.py):
 
@@ -149,7 +153,7 @@ class IIWA14WipeRobosuiteEnv:
             If None is specified, the default configuration will be used.
     """
 
-    def __init__(self, single_task_ml=False):
+    def __init__(self, single_task_ml = True):
         self.env_configuration = "default"
         self.controller_configs = None
         self.gripper_types = "WipingGripper"
@@ -181,7 +185,7 @@ class IIWA14WipeRobosuiteEnv:
         self.path_pos = None
         self.task_config = DEFAULT_WIPE_CONFIG
         self.num_markers = self.task_config["num_markers"]
-        self.single_task_ml = single_task_ml
+        self.single_task_ml = True
 
         # Necessary for setting the subtasks correctly
         self._set_task_called = False

@@ -12,7 +12,7 @@ from robosuite.utils.placement_samplers import UniformRandomSampler
 from robosuite.utils.transform_utils import convert_quat
 
 
-class LiftMeta3(SingleArmEnv):
+class LiftCrise3(SingleArmEnv):
     """
     This class corresponds to the lifting task for a single robot arm.
 

@@ -5,12 +5,12 @@ import pickle
 
 class IIWA14PickplaceallRobosuiteEnv:
     """
-    This class encapsulates the single pick and place Robosuite task for the different objects can, bread, milk and
-    cereal. It shall serve the similar behaviour of MetaWorld environments after instantiation via metaworld.ML10().
+    This class encapsulates the PickPlaceAll task in Robosuite for CRiSE 1/7 while using the
+    IIWA14 robot with locked linear axes.
 
     Args:
-        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task meta RL (Meta 1/Meta 3) or
-        in a general ML setting with multiple diverse tasks (Meta 7).
+        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task MRL (CRiSE 1/CRiSE 3) or
+        in a general ML setting with multiple diverse tasks (CRiSE 7).
 
     Class variables (inherited from args in robosuite/environments/manipulation/pick_place.py):
 

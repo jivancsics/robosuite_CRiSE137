@@ -124,10 +124,10 @@ MW_TASKS_PER_ENV = 50
 
 
 class RobosuiteTaskSampler(TaskSampler):
-    """TaskSampler that distributes a Meta-World benchmark across workers.
+    """TaskSampler that distributes a CRiSE env across workers.
 
     Args:
-        benchmark (MLRobosuite.Benchmark): Benchmark to sample tasks from.
+        benchmark (CRiSE env): Benchmark to sample tasks from.
         kind (str): Must be either 'test' or 'train'. Determines whether to
             sample training or test tasks from the Benchmark.
         wrapper (Callable[garage.Env, garage.Env] or None): Wrapper to apply to

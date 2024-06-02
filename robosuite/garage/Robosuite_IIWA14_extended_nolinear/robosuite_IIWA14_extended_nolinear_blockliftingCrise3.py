@@ -5,14 +5,14 @@ from robosuite.utils.placement_samplers import UniformRandomSampler
 import numpy as np
 
 
-class SawyerBlockliftingMeta3RobosuiteEnv:
+class IIWA14BlockliftingCRISE3RobosuiteEnv:
     """
-    This class encapsulates the block lifting task of Robosuite and shall serve the similar behaviour of MetaWorld
-    environments after instantiation via metaworld.ML10().
+    This class encapsulates the LiftBlock task in Robosuite, especially for CRiSE 3 (adapted Reward function), while
+    using the IIWA14 robot with locked linear axes.
 
     Args:
-        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task meta RL (Meta 1/Meta 3) or
-        in a general ML setting with multiple diverse tasks (Meta 7).
+        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task MRL (CRiSE 1/CRiSE 3) or
+        in a general ML setting with multiple diverse tasks (CRiSE 7).
 
     Class variables (inherited from args in robosuite/environments/manipulation/lift.py):
 
@@ -188,8 +188,8 @@ class SawyerBlockliftingMeta3RobosuiteEnv:
     def __call__(self):
         return GymWrapper(
             suite.make(
-                "LiftMeta3",
-                robots="Sawyer",
+                "LiftCrise3",
+                robots="IIWA14_extended_nolinear",
                 use_camera_obs=self.use_camera_obs,
                 has_offscreen_renderer=self.has_offscreen_renderer,
                 has_renderer=self.has_renderer,

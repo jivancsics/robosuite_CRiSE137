@@ -1,6 +1,4 @@
 import robosuite as suite
-from robosuite.wrappers import GymWrapper
-from garage.envs import GymEnv
 import numpy as np
 from robosuite.utils.placement_samplers import UniformRandomSampler, SequentialCompositeSampler
 from robosuite.models.objects import BoxObject
@@ -10,10 +8,10 @@ if __name__ == "__main__":
 
     horizon = 500
     while True:
-        print("Welcome to the Robosuite ML Task Viewer!")
-        print("First choose between the Rethink Robotics Sawyer and the Kuka IIWA14 with fixed position on the linear axis")
+        print("Welcome to the Robosuite CRiSE Task Viewer!")
+        print("First choose between the Rethink Robotics Sawyer and the Kuka IIWA14 with fixed position on the linear axes")
         print("[1] Rethink Robotics Sawyer")
-        print("[2] Kuka IIWA14 with fixed position on the linear axis")
+        print("[2] Kuka IIWA14 with fixed position on the linear axes")
         choice_robot = input("Enter your number of choice: ")
         choice_robot = int(choice_robot)
 
@@ -28,7 +26,6 @@ if __name__ == "__main__":
         print("[8] Pick and place can")
         print("[9] Pick and place bread")
         print("[10] Stack blocks")
-        # print("[11] Lift a can")
         choice = input("Enter your number of choice: ")
         choice = int(choice)
 
@@ -277,72 +274,6 @@ if __name__ == "__main__":
                     bin2_pos=[0.1, 0.3, 0.8],
                 )
 
-            # Old cases Pick&Place Mixed and Wipe which got canceled out due to high
-            # complexity (high dimensional observation vector) and a different action
-            # space (Wipe -> no gripper)
-            # -------------------------------------------------------
-
-            # elif choice == 10:
-            #
-            #     env = GymWrapper(suite.make(
-            #         env_name="PickPlace",
-            #         robots="Sawyer",
-            #         has_renderer=True,
-            #         has_offscreen_renderer=False,
-            #         use_camera_obs=False,
-            #         bin1_pos=[-0.1, -0.27, 0.8],
-            #         bin2_pos=[0.1, 0.3, 0.8],
-            #         single_object_mode=0,
-            #     )
-            #     )
-
-            # elif choice == 11:
-            #
-            #     path_list = []
-            #     for i in range(30):
-            #         if i == 0:  # start position
-            #             path_list.append(np.random.uniform(-0.2 * 0.7 + 0.01, 0.2 * 0.7 - 0.01))
-            #             path_list.append(np.random.uniform(-0.2 * 0.7 + 0.01, 0.2 * 0.7 - 0.01))
-            #             path_list.append(np.random.uniform(-np.pi, np.pi))
-            #         else:  # rest of the path
-            #             if np.random.uniform(0, 1) > 0.7:
-            #                 direction = path_list[i * 3 - 1] + np.random.normal(0, 0.2)
-            #             else:
-            #                 direction = path_list[i * 3 - 1]
-            #
-            #             posnew0 = path_list[i * 3 - 3] + 0.002 * np.sin(direction)
-            #             posnew1 = path_list[i * 3 - 2] + 0.002 * np.cos(direction)
-            #
-            #             # We keep resampling until we get a valid new position that's on the table
-            #             while (
-            #                     abs(posnew0) >= 0.4 * 0.7 + 0.01
-            #                     or abs(posnew1) >= 0.4 * 0.7 + 0.01
-            #             ):
-            #                 direction += np.random.normal(0, 0.5)
-            #                 posnew0 = path_list[i * 3 - 3] + 0.002 * np.sin(direction)
-            #                 posnew1 = path_list[i * 3 - 2] + 0.002 * np.cos(direction)
-            #
-            #             # Append this newly sampled position
-            #             path_list.append(posnew0)
-            #             path_list.append(posnew1)
-            #             path_list.append(direction)
-            #
-            #     del path_list[2::3]
-            #
-            #     path_pos = path_list[2:]
-            #
-            #     env = GymWrapper(suite.make(
-            #         env_name="Wipe",
-            #         robots="Sawyer",
-            #         has_renderer=True,
-            #         has_offscreen_renderer=False,
-            #         use_camera_obs=False,
-            #         metalearning=True,
-            #         start_pos=path_list[:2],
-            #         path_pos=path_pos,
-            #     )
-            #     )
-
             elif choice == 10:
                 # initialize the two boxes
                 tex_attrib = {
@@ -422,30 +353,6 @@ if __name__ == "__main__":
                     use_camera_obs=False,
                     placement_initializer=placement_initializer,
                 )
-
-            # Task lift can would require modifications of the basic reward calculation
-
-            # elif choice == 11:
-            #
-            #     placement_initializer = UniformRandomSampler(
-            #         name="ObjectSampler",
-            #         x_range=[-0.1, -0.1],
-            #         y_range=[0.1, 0.1],
-            #         rotation=0,
-            #         ensure_object_boundary_in_range=False,
-            #         ensure_valid_placement=True,
-            #         reference_pos=np.array((0, 0, 0.8)),
-            #         z_offset=0.01,
-            #     )
-            #
-            #     env = suite.make(
-            #         env_name="LiftCan",
-            #         robots="Sawyer",
-            #         has_renderer=True,
-            #         has_offscreen_renderer=False,
-            #         use_camera_obs=False,
-            #         placement_initializer=placement_initializer,
-            #         reward_shaping=True,)
 
             else:
                 raise Exception("Error! Please enter an integer number in the range 1 to 10!")
@@ -795,46 +702,3 @@ if __name__ == "__main__":
                 env.reset()
 
         env.close()
-
-
-
-
-
-'''
-Old tests with the GymWrapper
--------------------------
-
-    env_gym = GymWrapper(
-        suite.make(
-            "Lift",
-            robots="Sawyer",  # use Sawyer robot
-            use_camera_obs=False,  # do not use pixel observations
-            has_offscreen_renderer=False,  # not needed since not using pixel obs
-            has_renderer=False,  # state if one can render to the screen or not
-            reward_shaping=True,  # use dense rewards
-            control_freq=20,  # control should happen fast enough so that simulation looks smooth
-            horizon=horizon    # max episode length
-        )
-    )
-
-
-
-    env_gym = GymEnv(env_gym, max_episode_length=horizon)   # hier max_episode_length als zweites Argument
-                                                            # mitgeben, da sonst kein Eintrag in
-                                                            # env.spec.max_episode_length --> in
-                                                            # bisherigen Implementierungen notwendig!
-
-
-    for i_episode in range(20):
-        observation = env_gym.reset()
-        for t in range(500):
-            # env_gym.render('human')
-            action = env_gym.action_space.sample()
-            # observation, reward, done, info = env_gym.step(action)
-            EnvStep = env_gym.step(action)
-            print("Step ", t, " : ", EnvStep)
-            # if done:
-            #     print("Episode finished after {} timesteps".format(t + 1))
-            #     break
-'''
-

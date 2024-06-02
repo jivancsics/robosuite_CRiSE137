@@ -11,13 +11,13 @@ from garage.tf.algos import RL2PPO
 from garage.tf.algos.rl2 import RL2Env, RL2Worker
 from garage.tf.policies import GaussianGRUPolicy
 from garage.trainer import TFTrainer
-from robosuite.garage.ml_robosuite import SawyerMeta3Robosuite
+from robosuite.garage.ml_robosuite import SawyerCRISE3Robosuite
 from robosuite.garage.robosuite_task_sampler import RobosuiteTaskSampler
 
 
-@wrap_experiment(snapshot_mode='gap', snapshot_gap=10)
-def meta3_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
-    """Function which sets up and starts the RL2 based Meta Learning experiment Meta 3 on the Robosuite benchmark.
+@wrap_experiment(snapshot_mode='gap', snapshot_gap=10, archive_launch_repo=False)
+def crise3_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
+    """Function which sets up and starts the RL2-based Meta Learning experiment on CRiSE 3.
     Robot used: Rethink Robotics Sawyer.
 
     Arguments:
@@ -29,10 +29,10 @@ def meta3_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """
     # Set up the environment
     set_seed(seed)
-    meta3 = SawyerMeta3Robosuite()
-    all_ml_train_subtasks = RobosuiteTaskSampler(meta3, 'train', lambda env, _: RL2Env(env))
+    crise3 = SawyerCRISE3Robosuite()
+    all_ml_train_subtasks = RobosuiteTaskSampler(crise3, 'train', lambda env, _: RL2Env(env))
     tasks = all_ml_train_subtasks.sample(meta_batch_size)
-    all_ml_test_subtasks = RobosuiteTaskSampler(meta3, 'test', lambda env, _: RL2Env(env))
+    all_ml_test_subtasks = RobosuiteTaskSampler(crise3, 'test', lambda env, _: RL2Env(env))
     env = tasks[0]()
     # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml, 'test'))
 
@@ -95,9 +95,9 @@ if __name__ == "__main__":
     parser.add_argument('--seed', type=int, default=1, help='Random seed to use for reproducibility')
     parser.add_argument('--epochs', type=int, default=3500, help='Epochs to execute')
     parser.add_argument('--episodes_per_task', type=int, default=10, help='Number of episodes to sample per task')  # 10 default
-    parser.add_argument('--meta_batch_size', type=int, default=3,  # 3 default
+    parser.add_argument('--meta_batch_size', type=int, default=9,  # 9 default
                         help='Tasks which are sampled per rollout (=trials in the original RL2 paper)')
 
     args = parser.parse_args()
-    meta3_rl2_ppo(seed=args.seed, epochs=args.epochs, episodes_per_task=args.episodes_per_task,
-                 meta_batch_size=args.meta_batch_size)
+    crise3_rl2_ppo(seed=args.seed, epochs=args.epochs, episodes_per_task=args.episodes_per_task,
+                   meta_batch_size=args.meta_batch_size)

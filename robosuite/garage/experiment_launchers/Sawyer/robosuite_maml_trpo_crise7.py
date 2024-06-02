@@ -4,7 +4,7 @@ from garage.experiment.deterministic import set_seed
 from robosuite.garage.robosuiteml_set_task_env import RobosuiteMLSetTaskEnv
 from garage.experiment import MetaEvaluator
 from robosuite.garage.robosuite_task_sampler import RobosuiteTaskSampler, SetTaskSampler
-from robosuite.garage.ml_robosuite import IIWA14MLRobosuite
+from robosuite.garage.ml_robosuite import SawyerCRISE7Robosuite
 from garage.sampler import RaySampler, LocalSampler
 from garage.torch.algos import MAMLTRPO
 from garage.torch.policies import GaussianMLPPolicy
@@ -13,11 +13,10 @@ from garage.trainer import Trainer
 import torch
 from garage.torch import set_gpu_mode
 
-@wrap_experiment(snapshot_mode='gap', snapshot_gap=5)
-def ml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
-    """Function which sets up and starts the MAML based Meta Learning experiment Meta 7 on the Robosuite benchmark.
-    This experiment resembles the ML10 experiment in MetaWorld. Robot used: IIWA14 with locked linear axes.
-
+@wrap_experiment(snapshot_mode='gap', snapshot_gap=5, archive_launch_repo=False)
+def crise7_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
+    """Function which sets up and starts the MAML-based Meta Learning experiment on CRiSE 7.
+    Robot used: Rethink Robotics Sawyer.
 
     Arguments:
         ctxt: Experiment context configuration from the wrap_experiment wrapper, used by Trainer class
@@ -28,10 +27,10 @@ def ml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """
     # Set up the environment
     set_seed(seed)
-    meta7 = IIWA14MLRobosuite()
-    all_ml_train_subtasks = RobosuiteTaskSampler(meta7, 'train')
-    sampled_subtasks = all_ml_train_subtasks.sample(meta_batch_size)  # 14 subtasks overall = 2 task per class
-    all_ml_test_subtasks = RobosuiteTaskSampler(meta7, 'test')
+    crise7 = SawyerCRISE7Robosuite()
+    all_ml_train_subtasks = RobosuiteTaskSampler(crise7, 'train')
+    sampled_subtasks = all_ml_train_subtasks.sample(meta_batch_size)
+    all_ml_test_subtasks = RobosuiteTaskSampler(crise7, 'test')
     env = sampled_subtasks[0]()
     # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml, 'test'))
 
@@ -77,18 +76,13 @@ def ml_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
                     outer_lr=1e-3,
                     max_kl_step=1e-2,
                     num_grad_updates=1,
-                    policy_ent_coeff=0.0,   # 5e-5 mentioned in the MetaWorld paper, but exact type is missing
-                    meta_evaluator=meta_evaluator,  # meta_batch_size = how many tasks to sample for training
+                    policy_ent_coeff=0.0,
+                    meta_evaluator=meta_evaluator,
                     evaluate_every_n_epochs=5)
 
-    # if torch.cuda.is_available():
-    #     set_gpu_mode(True)
-    # else:
-    #     set_gpu_mode(False)
-    # algo.to() no GPU mode available for MAMLTRPO
     trainer.setup(algo, env)
     trainer.train(n_epochs=epochs,
-                  batch_size=episodes_per_task * env.spec.max_episode_length)   # batch_size = batch length per task
+                  batch_size=episodes_per_task * env.spec.max_episode_length)
 
 
 
@@ -102,5 +96,5 @@ if __name__ == "__main__":
                         help='Tasks which are sampled per batch')
 
     args = parser.parse_args()
-    ml_maml_trpo(seed=args.seed, epochs=args.epochs, episodes_per_task=args.episodes_per_task,
-                 meta_batch_size=args.meta_batch_size)
+    crise7_maml_trpo(seed=args.seed, epochs=args.epochs, episodes_per_task=args.episodes_per_task,
+                     meta_batch_size=args.meta_batch_size)

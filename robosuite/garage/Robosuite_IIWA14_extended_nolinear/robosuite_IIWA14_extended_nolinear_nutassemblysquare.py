@@ -7,13 +7,12 @@ import numpy as np
 
 class IIWA14NutassemblysquareRobosuiteEnv:
     """
-    This class encapsulates the specific nut assembly task of Robosuite where a square nut shall be assembled onto
-    the square peg. The behaviour of MetaWorld environments after instantiation via metaworld.ML10() shall be copied
-    by this class.
+    This class encapsulates the NutAssemblySquare task in Robosuite for CRiSE 1/7 while using the
+    IIWA14 robot with locked linear axes.
 
     Args:
-        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task meta RL (Meta 1/Meta 3) or
-        in a general ML setting with multiple diverse tasks (Meta 7).
+        single_task_ml (bool): Indicates whether to use the Gym wrapper in a single task MRL (CRiSE 1/CRiSE 3) or
+        in a general ML setting with multiple diverse tasks (CRiSE 7).
 
     Class variables (inherited from args in robosuite/environments/manipulation/nut_assembly.py):
 

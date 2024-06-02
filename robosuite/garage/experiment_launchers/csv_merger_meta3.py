@@ -1,3 +1,7 @@
+"""Script for merging .csv files
+Modify the directories to use the script
+"""
+
 import csv
 
 
@@ -5,24 +9,24 @@ def merge_csv():
     data_rows_csv1 = []
     data_rows_csv2 = []
 
-    with open('IIWA14_extended_nolinear/data/local/experiment/meta3_rl2_ppo/progress.csv', 'r') as file:
+    with open('IIWA14_extended_nolinear/data/local/experiment/crise3_rl2_ppo/progress.csv', 'r') as file:
         reader = csv.reader(file)
         header_master = next(reader)
         for data_row in reader:
             data_rows_csv1.append(data_row)
 
-    with open('IIWA14_extended_nolinear/data/local/experiment/meta3_rl2_ppo/pre_trained_meta3_rl2_ppo_1/progress.csv',
+    with open('IIWA14_extended_nolinear/data/local/experiment/crise3_rl2_ppo/pre_trained_crise3_rl2_ppo_1/progress.csv',
               'r') as file:
         reader = csv.reader(file)
         header_merge = next(reader)
         for data_row in reader:
             data_rows_csv2.append(data_row)
 
-    # MetaTest ist not logged during resume of the experiment -> get information from debug.log
-    text_file = open('IIWA14_extended_nolinear/data/local/experiment/meta3_rl2_ppo/pre_trained_meta3_rl2_ppo_1/debug.log', 'r')
+    # If Meta-Test ist not logged during resume of the experiment -> get information from debug.log
+    text_file = open('IIWA14_extended_nolinear/data/local/experiment/crise3_rl2_ppo/pre_trained_crise3_rl2_ppo_1/debug.log', 'r')
     file_lines = text_file.readlines()
 
-    # Extract MetaTest data
+    # Extract Meta-Test data
     compare = [data for data in file_lines if 'MetaTest/' in data]
 
     iterations_master = [line[header_master.index('Average/Iteration')] for line in data_rows_csv1]
@@ -78,6 +82,7 @@ def merge_csv():
         writer.writerows(final_csv_data)
 
     file.close()
+
 
 if __name__ == "__main__":
     merge_csv()

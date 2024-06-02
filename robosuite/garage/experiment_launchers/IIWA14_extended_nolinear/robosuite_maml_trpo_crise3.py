@@ -4,7 +4,7 @@ from garage.experiment.deterministic import set_seed
 from robosuite.garage.robosuiteml_set_task_env import RobosuiteMLSetTaskEnv
 from garage.experiment import MetaEvaluator
 from robosuite.garage.robosuite_task_sampler import RobosuiteTaskSampler, SetTaskSampler
-from robosuite.garage.ml_robosuite import IIWA14Meta3Robosuite
+from robosuite.garage.ml_robosuite import IIWA14CRISE3Robosuite
 from garage.sampler import RaySampler, LocalSampler
 from garage.torch.algos import MAMLTRPO
 from garage.torch.policies import GaussianMLPPolicy
@@ -14,9 +14,9 @@ import torch
 from garage.torch import set_gpu_mode
 
 
-@wrap_experiment(snapshot_mode='gap', snapshot_gap=5)
-def meta3_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
-    """Function which sets up and starts the MAML based Meta Learning experiment Meta 3 on the Robosuite benchmark.
+@wrap_experiment(snapshot_mode='gap', snapshot_gap=1, archive_launch_repo=False)
+def crise3_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
+    """Function which sets up and starts the MAML-based Meta Learning experiment on CRISE 3.
     Robot used: IIWA14 with locked linear axes.
 
     Arguments:
@@ -28,10 +28,10 @@ def meta3_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """
     # Set up the environment
     set_seed(seed)
-    meta3 = IIWA14Meta3Robosuite()
-    all_ml_train_subtasks = RobosuiteTaskSampler(meta3, 'train')
+    crise3 = IIWA14CRISE3Robosuite()
+    all_ml_train_subtasks = RobosuiteTaskSampler(crise3, 'train')
     sampled_subtasks = all_ml_train_subtasks.sample(meta_batch_size)  # 6 subtasks overall = 2 task per class
-    all_ml_test_subtasks = RobosuiteTaskSampler(meta3, 'test')
+    all_ml_test_subtasks = RobosuiteTaskSampler(crise3, 'test')
     env = sampled_subtasks[0]()
     # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml, 'test'))
 
@@ -81,11 +81,6 @@ def meta3_maml_trpo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
                     meta_evaluator=meta_evaluator,  # meta_batch_size = how many tasks to sample for training
                     evaluate_every_n_epochs=5)
 
-    # if torch.cuda.is_available():
-    #     set_gpu_mode(True)
-    # else:
-    #     set_gpu_mode(False)
-    # algo.to() no GPU mode available for MAMLTRPO
     trainer.setup(algo, env)
     trainer.train(n_epochs=epochs,
                   batch_size=episodes_per_task * env.spec.max_episode_length)   # batch_size = batch length per task
@@ -97,10 +92,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=1, help='Random seed to use for reproducibility')
     parser.add_argument('--epochs', type=int, default=3500, help='Epochs to execute')
-    parser.add_argument('--episodes_per_task', type=int, default=10, help='Number of episodes to sample per task')  # 10 default
-    parser.add_argument('--meta_batch_size', type=int, default=6,  # 6 default
+    parser.add_argument('--episodes_per_task', type=int, default=2, help='Number of episodes to sample per task')  # 10 default
+    parser.add_argument('--meta_batch_size', type=int, default=3,  # 18 default
                         help='Tasks which are sampled per batch')
 
     args = parser.parse_args()
-    meta3_maml_trpo(seed=args.seed, epochs=args.epochs, episodes_per_task=args.episodes_per_task,
-                 meta_batch_size=args.meta_batch_size)
+    crise3_maml_trpo(seed=args.seed, epochs=args.epochs, episodes_per_task=args.episodes_per_task,
+                     meta_batch_size=args.meta_batch_size)

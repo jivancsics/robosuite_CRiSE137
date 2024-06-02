@@ -133,8 +133,8 @@ class SetTaskUpdate(EnvUpdate):
             #
             # old_env.set_task(self._task)
             # return old_env
-            warnings.warn('SetTaskEnvUpdate is closing an environment. This '
-                          'may indicate a very slow TaskSampler setup.')
+            # warnings.warn('SetTaskEnvUpdate is closing an environment. This '
+            #               'may indicate a very slow TaskSampler setup.')
             old_env.close()
             return self._make_env()
 

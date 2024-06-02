@@ -1,4 +1,4 @@
-"""File for visualizing a trained MAML-based policy on Meta 1 tasks as well as on Meta 7 tasks"""
+"""File for visualising a MAML-based trained policy on CRiSE 1/3 tasks as well as on CRiSE 7 tasks"""
 
 from garage.experiment import Snapshotter
 from time import sleep
@@ -11,15 +11,15 @@ from robosuite.models.objects import BoxObject
 from robosuite.utils.mjcf_utils import CustomMaterial
 
 
-def visualize_torch_policy():
+def visualise_torch_policy():
 
     horizon = 500
 
-    print("Welcome to the RML Policy Viewer for Meta Learning across tasks (Meta 7) and single task RML (Meta 1)!")
-    print("Based on the learned MAML policy, choose between the Rethink Robotics Sawyer and the Kuka "
-          "IIWA14 with fixed position on the linear axis")
+    print("Welcome to the MRL Policy Viewer for Meta Learning across tasks (CRiSE 7) and single task MRL (CRiSE 1/3)!")
+    print("Based on the MAML-learned policy, choose between the Rethink Robotics Sawyer and the Kuka "
+          "IIWA14 with fixed position on the linear axes")
     print("[1] Rethink Robotics Sawyer")
-    print("[2] Kuka IIWA14 with fixed position on the linear axis")
+    print("[2] Kuka IIWA14 with fixed position on the linear axes")
     choice_robot = input("Enter your number of choice: ")
     choice_robot = int(choice_robot)
 
@@ -28,13 +28,13 @@ def visualize_torch_policy():
     else:
         robot = "IIWA14"
 
-    print("Choose between single task RML [1] (=Meta 1) and RML across tasks [2] (=Meta 7)")
+    print("Choose between single task MRL [1] (=CRiSE 1/3) and MRL across tasks [2] (=CRiSE 7)")
     choice_metalearning = input("Enter your number of choice: ")
     choice_metalearning = int(choice_metalearning)
 
     if choice_metalearning == 1:
 
-        print("Please enter a number to see one of the following tasks:")
+        print("Please enter a number to see one of the following tasks (Choose [2] for CRiSE 3):")
         print("[1] Open the Door")
         print("[2] Lift a block")
         print("[3] Round nut assembly")
@@ -50,7 +50,7 @@ def visualize_torch_policy():
         choice = int(choice)
 
         while True:
-            print("\033[92m {}\033[00m".format("META 1 VISUALIZATION"))
+            print("\033[92m {}\033[00m".format("CRiSE 1/3 VISUALISATION"))
             print("\033[92m {}\033[00m".format(robot))
 
             if choice_robot == 1:
@@ -736,9 +736,9 @@ def visualize_torch_policy():
             snapshotter = Snapshotter()
 
             if choice_robot == 2:
-                data = snapshotter.load('IIWA14_extended_nolinear/data/local/experiment/singleml_maml_trpo')
+                data = snapshotter.load('IIWA14_extended_nolinear/data/local/experiment/crise1_maml_trpo')
             else:
-                data = snapshotter.load('Sawyer/data/local/experiment/singleml_maml_trpo')
+                data = snapshotter.load('Sawyer/data/local/experiment/crise1_maml_trpo')
 
             policy = data['algo']
             obs, _ = env.reset()
@@ -758,8 +758,8 @@ def visualize_torch_policy():
                         return
 
             env.unwrapped.close()
-            end = input("Do you want to repeat the Meta 1 task visualization? Enter [Y]/[y] to repeat or "
-                        "any other key to end the visualization: ")
+            end = input("Do you want to repeat the CRiSE 1 task visualisation? Enter [Y]/[y] to repeat or "
+                        "any other key to end the visualisation: ")
 
             if 'Y' not in end and 'y' not in end:
                 return
@@ -767,11 +767,11 @@ def visualize_torch_policy():
     elif choice_metalearning == 2:
 
         while True:
-            print("\033[92m {}\033[00m".format("META 7 VISUALIZATION"))
+            print("\033[92m {}\033[00m".format("CRiSE 7 VISUALISATION"))
             print("\033[92m {}\033[00m".format(robot))
 
-            print("Please enter a number to see one of the Meta 7 tasks:")
-            print("Trained tasks:")
+            print("Please enter a number to see one of the CRiSE 7 tasks:")
+            print("Train tasks:")
             print("------------")
             print("[1] Open the Door")
             print("[2] Lift a block")
@@ -1473,9 +1473,9 @@ def visualize_torch_policy():
             snapshotter = Snapshotter()
 
             if choice_robot == 2:
-                data = snapshotter.load('IIWA14_extended_nolinear/data/local/experiment/ml_maml_trpo')
+                data = snapshotter.load('IIWA14_extended_nolinear/data/local/experiment/crise7_maml_trpo')
             else:
-                data = snapshotter.load('Sawyer/data/local/experiment/ml_maml_trpo')
+                data = snapshotter.load('Sawyer/data/local/experiment/crise7_maml_trpo')
 
             policy = data['algo']
             obs, _ = env.reset()
@@ -1495,15 +1495,15 @@ def visualize_torch_policy():
                         return
 
             env.unwrapped.close()
-            end = input("Do you want to repeat the Meta 7 task visualization? Enter [Y]/[y] to repeat or "
-                        "any other key to end the visualization: ")
+            end = input("Do you want to repeat the CRiSE 7 task visualisation? Enter [Y]/[y] to repeat or "
+                        "any other key to end the visualisation: ")
 
             if 'Y' not in end and 'y' not in end:
                 return
 
     else:
-        raise Exception("Error! Please enter [1] for Meta 1 or [2] for Meta 7 RML policy visualization!")
+        raise Exception("Error! Please enter [1] for CRiSE 1 or [2] for CRiSE 7 MRL policy visualisation!")
 
 
 if __name__ == "__main__":
-    visualize_torch_policy()
+    visualise_torch_policy()

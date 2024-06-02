@@ -4,7 +4,7 @@ from garage.experiment.deterministic import set_seed
 from robosuite.garage.robosuiteml_set_task_env import RobosuiteMLSetTaskEnv
 from garage.experiment import MetaEvaluator
 from robosuite.garage.robosuite_task_sampler import RobosuiteTaskSampler, SetTaskSampler
-from robosuite.garage.ml_robosuite import IIWA14MLRobosuite
+from robosuite.garage.ml_robosuite import SawyerCRISE1Robosuite
 from garage.sampler import RaySampler, LocalSampler
 from garage.tf.algos import RL2PPO
 from garage.tf.policies import GaussianGRUPolicy
@@ -14,10 +14,10 @@ from garage.tf.algos.rl2 import RL2Env, RL2Worker
 import tensorflow as tf
 from garage.torch import set_gpu_mode
 
-@wrap_experiment(snapshot_mode='gap', snapshot_gap=10)
-def ml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
-    """Function which sets up and starts the RL2 based Meta Learning experiment Meta 7 on the Robosuite benchmark.
-    This experiment resembles the ML10 experiment in MetaWorld. Robot used: IIWA14 with locked linear axes.
+@wrap_experiment(snapshot_mode='gap', snapshot_gap=10, archive_launch_repo=False)
+def crise1_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
+    """Function which sets up and starts the RL2-based single task Meta Learning experiment on CRiSE 1.
+    Robot used: Rethink Robotics Sawyer.
 
     Arguments:
         ctxt: Experiment context configuration from the wrap_experiment wrapper, used by Trainer class
@@ -28,12 +28,12 @@ def ml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """
     # Set up the environment
     set_seed(seed)
-    meta7 = IIWA14MLRobosuite()
-    all_ml_train_subtasks = RobosuiteTaskSampler(meta7, 'train', lambda env, _: RL2Env(env))
-    tasks = all_ml_train_subtasks.sample(meta_batch_size)
-    all_ml_test_subtasks = RobosuiteTaskSampler(meta7, 'test', lambda env, _: RL2Env(env))
+    crise1 = SawyerCRISE1Robosuite('blocklifting')
+    all_train_subtasks = RobosuiteTaskSampler(crise1, 'train', lambda env, _: RL2Env(env))
+    all_test_subtasks = RobosuiteTaskSampler(crise1, 'test', lambda env, _: RL2Env(env))
+    tasks = all_train_subtasks.sample(meta_batch_size)
     env = tasks[0]()
-    # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml, 'test'))
+    # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml1, 'test'))
 
     with TFTrainer(snapshot_config=ctxt) as trainer:
         policy = GaussianGRUPolicy(name='policy',
@@ -45,10 +45,10 @@ def ml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
 
         baseline = LinearFeatureBaseline(env_spec=env.spec)
 
-        meta_evaluator = MetaEvaluator(test_task_sampler=all_ml_test_subtasks,
-                                       n_test_tasks=(int(meta_batch_size/7)*len(all_ml_test_subtasks._classes)),
+        meta_evaluator = MetaEvaluator(test_task_sampler=all_test_subtasks,
+                                       n_test_tasks=1,
                                        n_exploration_eps=episodes_per_task,
-                                       is_robosuite_ml=True,)
+                                       is_robosuite_ml=True, )
 
         # sampler = RaySampler(agents=policy,
         #                      envs=env,
@@ -65,7 +65,7 @@ def ml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
             worker_args=dict(n_episodes_per_trial=episodes_per_task))
 
         algo = RL2PPO(meta_batch_size=meta_batch_size,
-                      task_sampler=all_ml_train_subtasks,
+                      task_sampler=all_train_subtasks,
                       env_spec=env.spec,
                       policy=policy,
                       baseline=baseline,
@@ -93,10 +93,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=1, help='Random seed to use for reproducibility')
     parser.add_argument('--epochs', type=int, default=3500, help='Epochs to execute')
-    parser.add_argument('--episodes_per_task', type=int, default=10, help='Number of episodes to sample per task')  # 10 default
-    parser.add_argument('--meta_batch_size', type=int, default=7,  # 7 default
-                        help='Tasks which are sampled per rollout (=trials in the original RL2 paper)')
+    parser.add_argument('--episodes_per_task', type=int, default=10, help='Number of episodes to sample per task')
+    parser.add_argument('--meta_batch_size', type=int, default=20,  # 20 default
+                        help='Tasks which are sampled per batch')
 
     args = parser.parse_args()
-    ml_rl2_ppo(seed=args.seed, epochs=args.epochs, episodes_per_task=args.episodes_per_task,
-                 meta_batch_size=args.meta_batch_size)
+    crise1_rl2_ppo(seed=args.seed, epochs=args.epochs, episodes_per_task=args.episodes_per_task,
+                   meta_batch_size=args.meta_batch_size)

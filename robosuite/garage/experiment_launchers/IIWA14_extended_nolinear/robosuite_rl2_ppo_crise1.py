@@ -4,7 +4,7 @@ from garage.experiment.deterministic import set_seed
 from robosuite.garage.robosuiteml_set_task_env import RobosuiteMLSetTaskEnv
 from garage.experiment import MetaEvaluator
 from robosuite.garage.robosuite_task_sampler import RobosuiteTaskSampler, SetTaskSampler
-from robosuite.garage.ml_robosuite import SawyerSingleMLRobosuite
+from robosuite.garage.ml_robosuite import IIWA14CRISE1Robosuite
 from garage.sampler import RaySampler, LocalSampler
 from garage.tf.algos import RL2PPO
 from garage.tf.policies import GaussianGRUPolicy
@@ -14,10 +14,10 @@ from garage.tf.algos.rl2 import RL2Env, RL2Worker
 import tensorflow as tf
 from garage.torch import set_gpu_mode
 
-@wrap_experiment(snapshot_mode='gap', snapshot_gap=10)
-def singleml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
-    """Function which sets up and starts the RL2 based single task Meta Learning experiment Meta 1 on the
-    Robosuite benchmark. This experiment resembles the ML1 experiment in MetaWorld. Robot used: Rethink Robotics Sawyer.
+@wrap_experiment(snapshot_mode='gap', snapshot_gap=10, archive_launch_repo=False)
+def crise1_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
+    """Function which sets up and starts the RL2-based single task Meta Learning experiment on CRISE 1.
+    Robot used: IIWA14 with locked linear axes.
 
     Arguments:
         ctxt: Experiment context configuration from the wrap_experiment wrapper, used by Trainer class
@@ -28,9 +28,9 @@ def singleml_rl2_ppo(ctxt, seed, epochs, episodes_per_task, meta_batch_size):
     """
     # Set up the environment
     set_seed(seed)
-    ml1 = SawyerSingleMLRobosuite('blocklifting')
-    all_train_subtasks = RobosuiteTaskSampler(ml1, 'train', lambda env, _: RL2Env(env))
-    all_test_subtasks = RobosuiteTaskSampler(ml1, 'test', lambda env, _: RL2Env(env))
+    crise1 = IIWA14CRISE1Robosuite('canlifting')
+    all_train_subtasks = RobosuiteTaskSampler(crise1, 'train', lambda env, _: RL2Env(env))
+    all_test_subtasks = RobosuiteTaskSampler(crise1, 'test', lambda env, _: RL2Env(env))
     tasks = all_train_subtasks.sample(meta_batch_size)
     env = tasks[0]()
     # sampler_test_subtasks = SetTaskSampler(RobosuiteMLSetTaskEnv, env=RobosuiteMLSetTaskEnv(ml1, 'test'))
@@ -94,9 +94,9 @@ if __name__ == "__main__":
     parser.add_argument('--seed', type=int, default=1, help='Random seed to use for reproducibility')
     parser.add_argument('--epochs', type=int, default=3500, help='Epochs to execute')
     parser.add_argument('--episodes_per_task', type=int, default=10, help='Number of episodes to sample per task')
-    parser.add_argument('--meta_batch_size', type=int, default=20,  # 25 default
+    parser.add_argument('--meta_batch_size', type=int, default=20,  # 20 default
                         help='Tasks which are sampled per batch')
 
     args = parser.parse_args()
-    singleml_rl2_ppo(seed=args.seed, epochs=args.epochs, episodes_per_task=args.episodes_per_task,
-                     meta_batch_size=args.meta_batch_size)
+    crise1_rl2_ppo(seed=args.seed, epochs=args.epochs, episodes_per_task=args.episodes_per_task,
+                   meta_batch_size=args.meta_batch_size)

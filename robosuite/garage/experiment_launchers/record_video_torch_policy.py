@@ -1,4 +1,4 @@
-"""File for recording a video of a trained MAML-based policy on Meta 1 tasks as well as on Meta 7 tasks"""
+"""File for recording a video of a MAML-trained policy on CRiSE 1/3 tasks as well as on CRiSE 7 tasks"""
 
 from garage.experiment import Snapshotter
 import robosuite as suite
@@ -22,7 +22,7 @@ def flatten_obs(obs_dict, env, single_task_ml, verbose=False):
     Args:
         obs_dict (OrderedDict): ordered dictionary of observations
         env (Robosuite Manipulation Environment): actual Robosuite environment
-        single_task_ml (bool): Whether the used env is a Meta 1 task or not
+        single_task_ml (bool): Whether the used env is a CRiSE 1/3 task or not
         verbose (bool): Whether to print out to console as observation keys are processed
 
     Returns:
@@ -129,11 +129,11 @@ def record_torch_policy():
 
     horizon = 500
 
-    print("Welcome to the RML Policy Recorder for Meta Learning across tasks (Meta 7) and single task RML (Meta 1)!")
+    print("Welcome to the MRL Policy Recorder for Meta Learning across tasks (CRiSE 7) and single task RML (CRiSE 1/3)!")
     print("Based on the learned MAML policy, choose between the Rethink Robotics Sawyer and the Kuka "
-          "IIWA14 with fixed position on the linear axis")
+          "IIWA14 with fixed position on the linear axes")
     print("[1] Rethink Robotics Sawyer")
-    print("[2] Kuka IIWA14 with fixed position on the linear axis")
+    print("[2] Kuka IIWA14 with fixed position on the linear axes")
     choice_robot = input("Enter your number of choice: ")
     choice_robot = int(choice_robot)
 
@@ -142,13 +142,13 @@ def record_torch_policy():
     else:
         robot = "IIWA14"
 
-    print("Choose between single task RML [1] (=Meta 1) and RML across tasks [2] (=Meta 7)")
+    print("Choose between single task MRL [1] (=CRISE 1/3) and MRL across tasks [2] (=CRiSE 7)")
     choice_metalearning = input("Enter your number of choice: ")
     choice_metalearning = int(choice_metalearning)
 
     if choice_metalearning == 1:
 
-        print("Please enter a number to see one of the following tasks:")
+        print("Please enter a number to see one of the following tasks (Choose [2] for CRiSE 3):")
         print("[1] Open the Door")
         print("[2] Lift a block")
         print("[3] Round nut assembly")
@@ -164,7 +164,7 @@ def record_torch_policy():
         choice = int(choice)
 
         while True:
-            print("\033[92m {}\033[00m".format("META 1 POLICY RECORDING"))
+            print("\033[92m {}\033[00m".format("CRiSE 1/3 POLICY RECORDING"))
             print("\033[92m {}\033[00m".format(robot))
 
             if choice_robot == 1:
@@ -945,12 +945,12 @@ def record_torch_policy():
                 raise Exception("Robot Error! Please enter [1] for the Sawyer or [2] for the Kuka IIWA14 robot!")
 
             snapshotter = Snapshotter()
-            video_writer = imageio.get_writer(name + '_' + robot + '_MAML_Meta1.mp4', mode='I', fps=20)
+            video_writer = imageio.get_writer(name + '_' + robot + '_MAML_CRiSE1.mp4', mode='I', fps=20)
 
             if choice_robot == 2:
-                data = snapshotter.load('IIWA14_extended_nolinear/data/local/experiment/singleml_maml_trpo')
+                data = snapshotter.load('IIWA14_extended_nolinear/data/local/experiment/crise1_maml_trpo')
             else:
-                data = snapshotter.load('Sawyer/data/local/experiment/singleml_maml_trpo')
+                data = snapshotter.load('Sawyer/data/local/experiment/crise1_maml_trpo')
 
             policy = data['algo']
             obs_dict = env.reset()  # Initial observation
@@ -979,7 +979,7 @@ def record_torch_policy():
             video_writer.close()
             env.close()
 
-            end = input("Do you want to repeat the Meta 1 task recording? Enter [Y]/[y] to repeat or "
+            end = input("Do you want to repeat the CRiSE 1 task recording? Enter [Y]/[y] to repeat or "
                         "any other key to end the recording: ")
 
             if 'Y' not in end and 'y' not in end:
@@ -988,11 +988,11 @@ def record_torch_policy():
     elif choice_metalearning == 2:
 
         while True:
-            print("\033[92m {}\033[00m".format("META 7 POLICY RECORDING"))
+            print("\033[92m {}\033[00m".format("CRiSE 7 POLICY RECORDING"))
             print("\033[92m {}\033[00m".format(robot))
 
-            print("Please enter a number to record one of the Meta 7 tasks:")
-            print("Trained tasks:")
+            print("Please enter a number to record one of the CRiSE 7 tasks:")
+            print("Train tasks:")
             print("------------")
             print("[1] Open the Door")
             print("[2] Lift a block")
@@ -1789,12 +1789,12 @@ def record_torch_policy():
                 raise Exception("Robot Error! Please enter [1] for the Sawyer or [2] for the Kuka IIWA14 robot!")
 
             snapshotter = Snapshotter()
-            video_writer = imageio.get_writer(name + '_' + robot + '_MAML_Meta7.mp4', mode='I', fps=20)
+            video_writer = imageio.get_writer(name + '_' + robot + '_MAML_CRiSE7.mp4', mode='I', fps=20)
 
             if choice_robot == 2:
-                data = snapshotter.load('IIWA14_extended_nolinear/data/local/experiment/ml_maml_trpo')
+                data = snapshotter.load('IIWA14_extended_nolinear/data/local/experiment/crise7_maml_trpo')
             else:
-                data = snapshotter.load('Sawyer/data/local/experiment/ml_maml_trpo')
+                data = snapshotter.load('Sawyer/data/local/experiment/crise7_maml_trpo')
             policy = data['algo']
             obs_dict = env.reset()  # Initial observation
             obs = flatten_obs(obs_dict, env, False)
@@ -1829,7 +1829,7 @@ def record_torch_policy():
                 return
 
     else:
-        raise Exception("Error! Please enter [1] for Meta 1 or [2] for Meta 7 RML policy recording!")
+        raise Exception("Error! Please enter [1] for Meta 1 or [2] for Meta 7 MRL policy recording!")
 
 
 if __name__ == "__main__":

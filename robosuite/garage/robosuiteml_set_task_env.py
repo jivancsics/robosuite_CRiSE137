@@ -1,4 +1,4 @@
-"""Environment that wraps a Robosuite ML benchmark in the set_task interface."""
+"""Environment that wraps CRiSE in the set_task interface."""
 import random
 
 # Importing garage directly avoids circular dependencies with GymEnv,
@@ -8,7 +8,7 @@ from garage._environment import Environment
 
 
 class RobosuiteMLSetTaskEnv(Environment):
-    """Environment form of a Robosuite ML benchmark.
+    """Environment form of a Robosuite CRiSE.
 
     This class is generally less efficient than using a TaskSampler, if that
     can be used instead, since each instance of this class internally caches a
@@ -18,7 +18,7 @@ class RobosuiteMLSetTaskEnv(Environment):
     at construction time.
 
     Args:
-        benchmark robosuiteML.Benchmark or None): The benchmark to wrap.
+        benchmark (CRiSE or None): The benchmark to wrap.
         kind (str or None): Whether to use test or train tasks.
         wrapper (Callable[garage.Env, garage.Env] or None): Wrapper to apply to
             env instances.
@@ -119,7 +119,7 @@ class RobosuiteMLSetTaskEnv(Environment):
             self._fill_tasks()
         self._current_task = task['inner']
         # self._construct_env_if_needed()
-        # Force the MetaWorldSetTaskEnv to once again set the appropriate task, even if it is already set through
+        # Force the SetTaskEnv to once again set the appropriate task, even if it is already set through
         # ------------------
         # Old code:
         # self._construct_env_if_needed()

@@ -16,15 +16,15 @@ from robosuite.wrappers import Wrapper
 
 class GymWrapper(Wrapper, Env):
     """
-    Initializes the Gym wrapper for Meta RL with Robosuite environments in Garage. Mimics many of the required
+    Initializes the Gym wrapper for MRL with CRiSE Robosuite environments in Garage. Mimics many of the required
     functionalities of the Wrapper class found in the gym.core module. Handles the uniform representation of the
-    observation vector over all Meta RL tasks. In case of single task Meta RL, the wrapper is able to adapt the
+    observation vector over all MRL tasks. In case of single task MRL, the wrapper is able to adapt the
     observation vector through the single_task_ml flag.
 
     Args:
         env (MujocoEnv): The environment to wrap.
-        single_task_ml (bool): Indicates whether to use the wrapper in a single task meta RL learning or
-        in a general ML setting with multiple diverse tasks.
+        single_task_ml (bool): Indicates whether to use the wrapper in a single task MRL setting (CRiSE 1/3) or
+        in a general MRL setting with multiple diverse tasks (CRiSE 7).
         keys (None or list of str): If provided, each observation will
             consist of concatenated keys from the wrapped environment's
             observation dictionary. Defaults to proprio-state and object-state.
