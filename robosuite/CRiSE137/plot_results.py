@@ -2,7 +2,7 @@
 The directories must be modified to the individual directory structure.
 Proposed structure:
 
-  garage
+  CRiSE137
     ├──Experiment_Data (create this folder and store the experiment data in the respective sub-folders)
     │    ├──Robosuite_IIWA14_CRiSE1_LiftBlock
     │    │    ├──crise1_maml_trpo
