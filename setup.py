@@ -23,8 +23,6 @@ setup(
 	"pybullet",
 	"mujoco-py<2.2,>=2.1",
 	"tensorboard==2.12.3",
-	"metaworld",
-	"git+https://github.com/Farama-Foundation/Metaworld.git@master#egg=metaworld",
 	"tensorflow==2.12.0",
 	"tensorflow-io-gcs-filesystem==0.32.0",
 	"tensorflow-probability==0.20.1",
