@@ -3,10 +3,12 @@
 CRiSE 1-3-7 constitute three compilations of real-world inspired robotic task simulation environments that serve as simulation platforms to execute and test Meta-Reinforcement Learning (MRL) algorithms. All three compilations of simulation environments are inspired by the robotic setup at the TU Vienna Automation and Control Institute's Robotics Laboratory. 
 
 **CRiSE 7** consists of seven meta-train tasks and three meta-test tasks, which all shall be solved successfully with a KUKA LBR IIWA14 robot. This robotic task compilation has the highest MRL complexity.
-![Overview of the CRiSE 7 meta-train and test tasks.](https://github.com/jivancsics/robosuite_CRiSE137/tree/master/docs/images/CRiSE7_TaskOverview.PNG) 
+
+![Overview of the CRiSE 7 meta-train and test tasks.](docs/images/CRiSE7_TaskOverview.PNG) 
 
 **CRiSE 3** utilises MRL algorithms in a different way. This environment is based on the _Lift_ task. Instead of learning how to handle just the block object like in CRiSE 1 and 7, CRiSE 3 shall focus on handling three different meta-train objects while fulfilling the _Lift_ task. Two meta-test objects shall show the adaptability of the algorithm to different, previously unseen object shapes.
-![Overview of the CRiSE 3 meta-train and test tasks.](https://github.com/jivancsics/robosuite_CRiSE137/tree/master/docs/images/CRiSE3_TaskOverview.PNG)
+
+![Overview of the CRiSE 3 meta-train and test tasks.](docs/images/CRiSE3_TaskOverview.PNG)
 
 **CRiSE 1** is a flexible task simulation environment where single tasks are natively set up in an MRL context. All in CRiSE 7 used tasks can also be defined as single-task problem environments here. This problem setting enables more robust learning of single tasks using MRL algorithms.
 
