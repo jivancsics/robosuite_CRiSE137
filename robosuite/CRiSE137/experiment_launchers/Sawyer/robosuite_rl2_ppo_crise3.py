@@ -11,8 +11,8 @@ from garage.tf.algos import RL2PPO
 from garage.tf.algos.rl2 import RL2Env, RL2Worker
 from garage.tf.policies import GaussianGRUPolicy
 from garage.trainer import TFTrainer
-from robosuite.garage.ml_robosuite import SawyerCRISE3Robosuite
-from robosuite.garage.robosuite_task_sampler import RobosuiteTaskSampler
+from robosuite.CRiSE137.ml_robosuite import SawyerCRISE3Robosuite
+from robosuite.CRiSE137.robosuite_task_sampler import RobosuiteTaskSampler
 
 
 @wrap_experiment(snapshot_mode='gap', snapshot_gap=10, archive_launch_repo=False)

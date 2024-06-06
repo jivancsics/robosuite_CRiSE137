@@ -4,7 +4,7 @@ from collections import OrderedDict
 import numpy as np
 
 from robosuite.environments.manipulation.single_arm_env import SingleArmEnv
-from robosuite.garage.ml_wipe_arena import WipeArenaML
+from robosuite.CRiSE137.ml_wipe_arena import WipeArenaML
 from robosuite.models.tasks import ManipulationTask
 from robosuite.utils.observables import Observable, sensor
 

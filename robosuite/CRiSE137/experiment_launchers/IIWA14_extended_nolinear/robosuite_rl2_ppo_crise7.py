@@ -1,10 +1,10 @@
 import argparse
 from garage import wrap_experiment
 from garage.experiment.deterministic import set_seed
-from robosuite.garage.robosuiteml_set_task_env import RobosuiteMLSetTaskEnv
+from robosuite.CRiSE137.robosuiteml_set_task_env import RobosuiteMLSetTaskEnv
 from garage.experiment import MetaEvaluator
-from robosuite.garage.robosuite_task_sampler import RobosuiteTaskSampler, SetTaskSampler
-from robosuite.garage.ml_robosuite import IIWA14CRISE7Robosuite
+from robosuite.CRiSE137.robosuite_task_sampler import RobosuiteTaskSampler, SetTaskSampler
+from robosuite.CRiSE137.ml_robosuite import IIWA14CRISE7Robosuite
 from garage.sampler import RaySampler, LocalSampler
 from garage.tf.algos import RL2PPO
 from garage.tf.policies import GaussianGRUPolicy
@@ -93,8 +93,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=1, help='Random seed to use for reproducibility')
     parser.add_argument('--epochs', type=int, default=3500, help='Epochs to execute')
-    parser.add_argument('--episodes_per_task', type=int, default=10, help='Number of episodes to sample per task')
-    parser.add_argument('--meta_batch_size', type=int, default=21,  # 21 default
+    parser.add_argument('--episodes_per_task', type=int, default=1, help='Number of episodes to sample per task')
+    parser.add_argument('--meta_batch_size', type=int, default=7,  # 21 default
                         help='Tasks which are sampled per rollout (=trials in the original RL2 paper)')
 
     args = parser.parse_args()

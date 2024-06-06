@@ -1,10 +1,10 @@
 import argparse
 from garage import wrap_experiment
 from garage.experiment.deterministic import set_seed
-from robosuite.garage.robosuiteml_set_task_env import RobosuiteMLSetTaskEnv
+from robosuite.CRiSE137.robosuiteml_set_task_env import RobosuiteMLSetTaskEnv
 from garage.experiment import MetaEvaluator
-from robosuite.garage.robosuite_task_sampler import RobosuiteTaskSampler, SetTaskSampler
-from robosuite.garage.ml_robosuite import SawyerCRISE3Robosuite
+from robosuite.CRiSE137.robosuite_task_sampler import RobosuiteTaskSampler, SetTaskSampler
+from robosuite.CRiSE137.ml_robosuite import SawyerCRISE3Robosuite
 from garage.sampler import RaySampler, LocalSampler
 from garage.torch.algos import MAMLTRPO
 from garage.torch.policies import GaussianMLPPolicy

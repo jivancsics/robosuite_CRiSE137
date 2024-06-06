@@ -2,7 +2,7 @@ import abc
 from collections import OrderedDict
 from typing import List, NamedTuple, Type
 import pickle
-import robosuite.garage.robosuite_env_dict as _env_dict
+import robosuite.CRiSE137.robosuite_env_dict as _env_dict
 import numpy as np
 
 EnvName = str

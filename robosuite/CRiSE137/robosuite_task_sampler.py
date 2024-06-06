@@ -1,4 +1,4 @@
-"""Efficient and general interfaces for sampling tasks for Meta-RL."""
+"""Efficient and general interfaces for sampling tasks for MRL."""
 # yapf: disable
 import abc
 import copy
@@ -7,7 +7,7 @@ import math
 import numpy as np
 
 from garage.envs import GymEnv, TaskNameWrapper, TaskOnehotWrapper
-from robosuite.garage.robosuite_env_update import (ExistingEnvUpdate, NewEnvUpdate, SetTaskUpdate)
+from robosuite.CRiSE137.robosuite_env_update import (ExistingEnvUpdate, NewEnvUpdate, SetTaskUpdate)
 
 # yapf: enable
 
