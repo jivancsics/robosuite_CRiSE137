@@ -1,6 +1,6 @@
 # CRiSE 1-3-7 — Compilations of Real-World inspired Robotic Task Simulation Environments
 
-CRiSE 1-3-7 constitute three compilations of real-world inspired robotic task simulation environments that serve as simulation platforms to execute and test Meta-Reinforcement Learning (MRL) algorithms. All three compilations of simulation environments are inspired by the robotic setup at the TU Vienna Automation and Control Institute's Robotics Laboratory. 
+CRiSE 1-3-7 constitute three compilations of real-world inspired robotic task simulation environments that serve as simulation platforms to execute and test Meta-Reinforcement Learning (MRL) algorithms. All three compilations of simulation environments are inspired by the robotic setup at the TU Vienna Automation and Control Institute's Robotics Laboratory. This repository was developed in the course of the equally labelled master thesis. 
 
 **CRiSE 7** consists of seven meta-train tasks and three meta-test tasks, which all shall be solved successfully with a KUKA LBR IIWA14 robot. This robotic task compilation has the highest MRL complexity.
 
@@ -99,12 +99,6 @@ Go into the cloned **garage** directory and run:
 
 ```shell
 pip install -e .
-```
-
-Install Meta-World:
-
-```shell
-pip install git+https://github.com/Farama-Foundation/Metaworld.git@master#egg=metaworld
 ```
 
 After that, enter the cloned **robosuite_CRiSE137** directory and run:
