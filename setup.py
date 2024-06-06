@@ -22,6 +22,7 @@ setup(
         "gym",
 	"pybullet",
 	"mujoco-py<2.2,>=2.1",
+	'metaworld @ git+https://github.com/Farama-Foundation/Metaworld.git@master#egg=metaworld',
 	"tensorboard==2.12.3",
 	"tensorflow==2.12.0",
 	"tensorflow-io-gcs-filesystem==0.32.0",
